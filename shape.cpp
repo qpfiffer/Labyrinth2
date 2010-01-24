@@ -51,7 +51,7 @@ void drawCube(float x, float y, float z) {
   glEnd();
 }
 
-void drawFace() {
+/*void drawFace() {
   glPushMatrix();  
   glBegin(GL_TRIANGLES);
     glColor3f(1,1,1 );  
@@ -271,4 +271,4 @@ void drawFace() {
     glVertex3f(0.35, 1.35, 0);
     glVertex3f(0.40, 1.65, -0.05);
   glEnd();  
-}
+  }*/

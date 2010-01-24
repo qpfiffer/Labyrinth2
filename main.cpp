@@ -1,9 +1,14 @@
 #include "main.h"
 
-// THINGS TO REMEMBER:
-float globRot[3] = { 0, 0, 0 }; // The camera's rotation at all times
-float globPos[3] = { 0, 0, 0 }; // The camera's position at all times
-float moveSpeed = 0.05;         // The camera's movement speed
+// Constructor for playerStats:
+playerStats::playerStats () {
+  int i;
+  for (i=0;i<3;i++) {
+    globRot[i]=0;
+    globPos[i]=0;
+  }
+  moveSpeed = 0.05;         // The camera's movement speed
+}
 
 int initIO(SDL_Surface *screen) {
   // Setting up video:
@@ -41,24 +46,31 @@ int initIO(SDL_Surface *screen) {
   return 0;
 }
 
-static void draw() {
+static void draw(playerStats *mainPlayerObj) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
   glClearColor(1,1,0,0); // Set the default fill to yellow
   // Mouse rotation stuff:
-  //glRotatef(globRot[0], 0, 1, 0);
-  //glRotatef(globRot[1], 1, 0, 0);
+  glRotatef(mainPlayerObj->globRot[0], 0, 1, 0);
+  glRotatef(mainPlayerObj->globRot[1], 1, 0, 0);
+  // Global movement:
+  glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
+  // So we have somthing to look at:
+  glColor3f(1,0,1);
   drawPlane(50, 50);
-
-  glTranslatef(0, -1, -5); // Move the camera back 2 units (Away from the screen)
-  //glTranslatef(globPos[0], globPos[1], globPos[2]);
+  glColor3f(1,0,0);
+  drawCube(1,1,1);
     
   SDL_GL_SwapBuffers();
 }
 
-static void mainLoop() {
+static void mainLoop(playerStats *mainPlayerObj) {
   SDL_Event event;
   float frnt_back=0, lft_rht=0; // Flags for movement
+  /*
+  // ANTI-SIGSEGV
+  printf(" globRot[1]: %f, glotbPos[1]: %f, moveSpeed: %f\n", mainPlayerObj->globRot[1], mainPlayerObj->globPos[1], mainPlayerObj->moveSpeed);
+  exit(1);*/
   while (1) {
     while(SDL_PollEvent(&event)) { // Keep going until there are no more pending events
       switch (event.type) {
@@ -68,16 +80,16 @@ static void mainLoop() {
 	  exit(0);
 	  break; // Redundant, but whatever.
 	case SDLK_w:
-	  frnt_back = moveSpeed; // Flag the forward key as pressed, repeat as necesssary
+	  frnt_back = mainPlayerObj->moveSpeed; // Flag the forward key as pressed, repeat as necesssary
 	  break;
 	case SDLK_s:
-	  frnt_back = -(moveSpeed);
+	  frnt_back = -(mainPlayerObj->moveSpeed);
 	  break;
 	case SDLK_a:
-	  lft_rht = -(moveSpeed);
+	  lft_rht = -(mainPlayerObj->moveSpeed);
 	  break;
 	case SDLK_d:
-	  lft_rht = moveSpeed;
+	  lft_rht = mainPlayerObj->moveSpeed;
 	  break;
 	default:
 	  // If it is a key we dont have an action for, just:
@@ -108,8 +120,8 @@ static void mainLoop() {
 	}
       case SDL_MOUSEMOTION:
 	// Rotate the camera
-	globRot[0]+=event.motion.xrel;
-	globRot[1]+=event.motion.yrel;
+	mainPlayerObj->globRot[0]+=event.motion.xrel;
+	mainPlayerObj->globRot[1]+=event.motion.yrel;
       	break;
       case SDL_QUIT:
 	exit(0);
@@ -118,21 +130,22 @@ static void mainLoop() {
     }
     // Debug showing movement flag values:
     //printf("frnt_back: %f || left_rht: %f\n", frnt_back, lft_rht);
-    globPos[2] += frnt_back;
-    globPos[0] += lft_rht;
+    mainPlayerObj->globPos[2] += frnt_back;
+    mainPlayerObj->globPos[0] += lft_rht;
     // Prints the position of the player:
     //printf("x: %f y: %f z: %f\n", globPos[0], globPos[1], globPos[2]);
-    draw(); // Updates the screen
-    SDL_Delay(50); // Wait 50ms, probably not necessary
+    draw(mainPlayerObj); // Updates the screen
+    //SDL_Delay(50); // Wait 50ms, probably not necessary
   }
 }
 
 int main(int argv, char *argc[]) {
   SDL_Surface *mainWindow;
-  //glutInit(argv, argc); // Because glut sucks
-  initIO(mainWindow); // Kbd, mouse, video, sound, etc.
+  playerStats mainPlayerObj;
   
-  mainLoop();
+  if (initIO(mainWindow) == 1) // Kbd, mouse, video, sound, etc.
+    return 1;
+  mainLoop(&mainPlayerObj);
 
   return 0;
 }
