@@ -31,7 +31,7 @@ int initIO(SDL_Surface *screen) {
   glMatrixMode(GL_PROJECTION); // Load the Porjection matrix (camera stuff, basically)
   glLoadIdentity(); // Reset that matrix
   float aspect = (float)vidInfo->current_w / (float)vidInfo->current_h; // The aspect ratio
-  gluPerspective(60.0, aspect, 0.1, 100.0); //
+  gluPerspective(50.0, aspect, 0.1, 100.0); //
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   glMatrixMode(GL_MODELVIEW); // Switch back to the good 'ole modelview matrix
