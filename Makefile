@@ -1,5 +1,5 @@
 INCLUDE = -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -I/usr/include/GL -I/usr/include
-LINKER = -L/usr/lib -lSDL -lpthread -lGL -lGLU -lglut
+LINKER = -L/usr/lib -lSDL -lpthread -lGL -lGLU
 NAME = labyrinth2
 LIBDIR =
 COMPILERFLAGS = -std=c++0x -Wall -g
