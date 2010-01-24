@@ -140,10 +140,10 @@ static void mainLoop(playerStats *mainPlayerObj) {
 }
 
 int main(int argv, char *argc[]) {
-  SDL_Surface *mainWindow;
+  SDL_Surface mainWindow;
   playerStats mainPlayerObj;
   
-  if (initIO(mainWindow) == 1) // Kbd, mouse, video, sound, etc.
+  if (initIO(&mainWindow) == 1) // Kbd, mouse, video, sound, etc.
     return 1;
   mainLoop(&mainPlayerObj);
 
