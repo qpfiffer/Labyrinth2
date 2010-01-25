@@ -60,8 +60,6 @@ int configInfo::setupVideo(SDL_Surface *screen) {
     screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
   else
     screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL);
-  //screen = SDL_SetVideoMode(vidInfo->current_w, vidInfo->current_h, 
-  //                          vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
   
   vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
   // OpenGL init:
