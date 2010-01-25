@@ -15,6 +15,8 @@ configInfo::configInfo() {
   width=640;
   height=480;
   fullscreen=0;
+  vsync=0;
+  maxfps=60; // 60 is ideal, 30 is good enough
 }
 // ---
 int configInfo::readConfig() {
@@ -35,6 +37,10 @@ int configInfo::readConfig() {
     if (strcmp(temp, "fullscreen") == 0) {
       config.getline(temp, 10, '\n');
       fullscreen=atoi(temp);
+    }
+    if (strcmp(temp, "vsync") == 0) {
+      config.getline(temp, 10, '\n');
+      vsync=atoi(temp);
     }
   }
   config.close();
