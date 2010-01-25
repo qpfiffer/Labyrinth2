@@ -1,7 +1,7 @@
 #include "main.h"
 
-// Constructor for playerStats:
-playerStats::playerStats () {
+// Constructors:
+playerStats::playerStats() {
   int i;
   for (i=0;i<3;i++) {
     globRot[i]=0;
@@ -10,19 +10,60 @@ playerStats::playerStats () {
   moveSpeed = 0.05;         // The camera's movement speed
 }
 
-int initIO(SDL_Surface *screen) {
+configInfo::configInfo() {
+  // Video defaults:
+  width=640;
+  height=480;
+  fullscreen=0;
+}
+// ---
+int configInfo::readConfig() {
+  config.open("config.txt", ifstream::in);
+  char temp[25];
+  while (config.good()) { // EOF, badbit and failbit
+    // cout << (char) config.get();
+    config.getline(temp, 24, '=');
+    //cout<<temp<<"\n";
+    if (strcmp(temp, "width") == 0) {
+      config.getline(temp, 10, '\n');
+      width=atoi(temp);
+    }
+    if (strcmp(temp, "height") == 0) {
+      config.getline(temp, 10, '\n');
+      height=atoi(temp);
+    }
+    if (strcmp(temp, "fullscreen") == 0) {
+      config.getline(temp, 10, '\n');
+      fullscreen=atoi(temp);
+    }
+  }
+  config.close();
+
+  return 0;
+}
+
+void configInfo::printVars() {
+  cout<<"Width: "<<width<<" Height: "<<height<<" Fullscreen: "<<fullscreen<<endl;
+}
+
+int configInfo::setupVideo(SDL_Surface *screen) {
   // Setting up video:
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Unable to init video: %s\n", SDL_GetError());
     return 1;
   }
+  
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // Turns double-buffering on
-  const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo(); // Get information about the computer
-  // and then use the Desktop's max res to make the game fullscreen
-  // NOTE: changing the video mode with this destroys opengl state
-  // Make sure to redo the state if it is ever changed
-  screen = SDL_SetVideoMode(vidInfo->current_w, vidInfo->current_h, 
-			    vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
+  const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
+  
+  if (fullscreen == 1)
+    screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
+  else
+    screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL);
+  //screen = SDL_SetVideoMode(vidInfo->current_w, vidInfo->current_h, 
+  //                          vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
+  
+  vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
   // OpenGL init:
   glEnable(GL_TEXTURE_2D); // Enable 2D textures
   glViewport(0, 0, vidInfo->current_w, vidInfo->current_h);
@@ -39,10 +80,19 @@ int initIO(SDL_Surface *screen) {
   glDisable(GL_CULL_FACE); //Draw front AND back of polygons
   glLoadIdentity(); // Blank GL_MODELVIEW
   // ---
+  return 0;
+
+}
+int initIO(SDL_Surface *screen) {
+  // Read in data from config file:
+  configInfo mainConfig;
+  mainConfig.readConfig();
+  if (mainConfig.setupVideo(screen) == 1)
+    return 1;
+  
   // Keyboard/mouse:
   SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
   SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
-  
   return 0;
 }
 
