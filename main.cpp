@@ -107,6 +107,7 @@ static void draw(playerStats *mainPlayerObj) {
   glColor3f(1,0,1);
   drawPlane(50, 50);
   glColor3f(1,0,0);
+  glTranslatef(0,0,-5);
   drawCube(1,1,1);
     
   SDL_GL_SwapBuffers();
