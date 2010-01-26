@@ -16,7 +16,6 @@ configInfo::configInfo() {
   height=480;
   fullscreen=0;
   vsync=0;
-  maxfps=60; // 60 is ideal, 30 is good enough
 }
 // ---
 int configInfo::readConfig() {
