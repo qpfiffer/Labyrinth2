@@ -22,13 +22,14 @@ class playerStats {
 class configInfo {
  public:
   configInfo();      // Constructor (duh)
-  int readConfig();  // Reads configuration info and fills out the info in this struct
+  int readConfig();  // Reads configuration file
   int setupVideo(SDL_Surface *screen);  // Communicates settings to SDL
   void printVars();  // Prints out vars for debuggings
  private:
   ifstream config;   // Config file fstream handler
   int width, height; // Screen width and height
   int fullscreen;
+  int vsync;
 };
 
 int initIO(SDL_Surface *screen); // Sound, video, keyboard, mouse, etc.
