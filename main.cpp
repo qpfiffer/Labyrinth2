@@ -99,10 +99,20 @@ static void draw(playerStats *mainPlayerObj) {
   glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
   glClearColor(1,1,0,0); // Set the default fill to yellow
   // Mouse rotation stuff:
+  /*while (1) {
+    if (mainPlayerObj->globRot[0] > 360)
+      mainPlayerObj->globRot[0]-=360;
+    if (mainPlayerObj->globRot[1] > 360)
+      mainPlayerObj->globRot[1]-=360;
+    if (mainPlayerObj->globRot[0] < 360 &&
+	mainPlayerObj->globRot[1] < 360)
+      break;
+      }*/
   glRotatef(mainPlayerObj->globRot[0], 0, 1, 0);
   glRotatef(mainPlayerObj->globRot[1], 1, 0, 0);
+  //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
   // Global movement:
-  glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
+  glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[2], mainPlayerObj->globPos[1]);
   // So we have somthing to look at:
   glColor3f(1,0,1);
   drawPlane(50, 50);
@@ -135,10 +145,10 @@ static void mainLoop(playerStats *mainPlayerObj) {
 	  frnt_back = -(mainPlayerObj->moveSpeed);
 	  break;
 	case SDLK_a:
-	  lft_rht = -(mainPlayerObj->moveSpeed);
+	  lft_rht = mainPlayerObj->moveSpeed;
 	  break;
 	case SDLK_d:
-	  lft_rht = mainPlayerObj->moveSpeed;
+	  lft_rht = -(mainPlayerObj->moveSpeed);
 	  break;
 	default:
 	  // If it is a key we dont have an action for, just:
@@ -148,20 +158,24 @@ static void mainLoop(playerStats *mainPlayerObj) {
       case SDL_KEYUP:
 	switch (event.key.keysym.sym) {
 	case SDLK_w:
-    if (frnt_back > 0)
+	  if (frnt_back > 0)
 	    frnt_back = 0; // Flag the forward key as pressed, repeat as necesssary
+	  cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
 	  break;
 	case SDLK_s:
-    if (frnt_back < 0)
+	  if (frnt_back < 0)
 	    frnt_back = 0;
+	  cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
 	  break;
 	case SDLK_a:
-    if (lft_rht < 0)
-	  lft_rht = 0;
+	  if (lft_rht > 0)
+	    lft_rht = 0;
+	  cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
 	  break;
 	case SDLK_d:
-    if (lft_rht > 0)
-	  lft_rht = 0;
+	  if (lft_rht < 0)
+	    lft_rht = 0;
+	  cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
 	  break;
 	default:
 	  // If it is a key we dont have an action for, just:
