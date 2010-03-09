@@ -113,24 +113,28 @@ static void draw(playerStats *mainPlayerObj) {
 	mainPlayerObj->globRot[1] < 360)
       break;
       }*/
-  glRotatef(mainPlayerObj->globRot[0], 0, 1, 0);
   glRotatef(mainPlayerObj->globRot[1], 1, 0, 0);
-  //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
+  glRotatef(mainPlayerObj->globRot[0], 0, 1, 0);
   // Global movement:
-  glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[2], mainPlayerObj->globPos[1]);
+  glTranslatef(-mainPlayerObj->globPos[0], -mainPlayerObj->globPos[1], -mainPlayerObj->globPos[2]);
+  //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;  
   // So we have somthing to look at:
   glColor3f(1,0,1);
   drawPlane(50, 50);
   glColor3f(1,0,0);
   glTranslatef(0,0,-5);
   drawCube(1,1,1);
-    
+  glColor3f(0,1,1);
+  glTranslatef(-2,0,2);
+  drawCube(1,1,1);
+
   SDL_GL_SwapBuffers();
 }
 
 static void mainLoop(playerStats *mainPlayerObj) {
   SDL_Event event;
   float frnt_back=0, lft_rht=0; // Flags for movement
+  float xrotrad, yrotrad; // For movement
   /*
   // ANTI-SIGSEGV
   printf(" globRot[1]: %f, glotbPos[1]: %f, moveSpeed: %f\n", mainPlayerObj->globRot[1], mainPlayerObj->globPos[1], mainPlayerObj->moveSpeed);
@@ -197,9 +201,37 @@ static void mainLoop(playerStats *mainPlayerObj) {
       }
     }
     // Debug showing movement flag values:
+    if (frnt_back == mainPlayerObj->moveSpeed) {
+      // If it is w:
+      yrotrad = (mainPlayerObj->globRot[1] / 180 * 3.141592654f);
+      xrotrad = (mainPlayerObj->globRot[0] / 180 * 3.141592654f); 
+      mainPlayerObj->globPos[0] += float(sin(yrotrad)) ;
+      mainPlayerObj->globPos[2] -= float(cos(yrotrad)) ;
+      mainPlayerObj->globPos[1] -= float(sin(xrotrad)) ;
+    }
+    else if (frnt_back == -mainPlayerObj->moveSpeed) {
+      // If it is s:
+      yrotrad = (mainPlayerObj->globRot[1] / 180 * 3.141592654f);
+      xrotrad = (mainPlayerObj->globRot[0] / 180 * 3.141592654f); 
+      mainPlayerObj->globPos[0] -= float(sin(yrotrad)) ;
+      mainPlayerObj->globPos[2] += float(cos(yrotrad)) ;
+      mainPlayerObj->globPos[1] += float(sin(xrotrad)) ;
+    }
+    if (lft_rht == mainPlayerObj->moveSpeed) {
+      // If it is a:
+      yrotrad = (mainPlayerObj->globRot[1] / 180 * 3.141592654f);
+      mainPlayerObj->globPos[0] -= float(cos(yrotrad)) * 0.2;
+      mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * 0.2;
+    }
+    else if (lft_rht == -mainPlayerObj->moveSpeed) {
+      // If it is d:
+      yrotrad = (mainPlayerObj->globRot[1] / 180 * 3.141592654f);
+      mainPlayerObj->globPos[0] += float(cos(yrotrad)) * 0.2;
+      mainPlayerObj->globPos[2] += float(sin(yrotrad)) * 0.2;
+    }
     //printf("frnt_back: %f || left_rht: %f\n", frnt_back, lft_rht);
-    mainPlayerObj->globPos[2] += frnt_back;
-    mainPlayerObj->globPos[0] += lft_rht;
+    //mainPlayerObj->globPos[1] += frnt_back;
+    //mainPlayerObj->globPos[0] += lft_rht;
     // Prints the position of the player:
     //printf("x: %f y: %f z: %f\n", globPos[0], globPos[1], globPos[2]);
     draw(mainPlayerObj); // Updates the screen
