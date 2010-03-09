@@ -16,6 +16,7 @@ configInfo::configInfo() {
   height=480;
   fullscreen=0;
   vsync=0;
+  fps=60;
 }
 // ---
 int configInfo::readConfig() {
@@ -41,6 +42,10 @@ int configInfo::readConfig() {
       config.getline(temp, 10, '\n');
       vsync=atoi(temp);
     }
+    if (strcmp(temp, "fps") == 0) {
+      config.getline(temp, 10, '\n');
+      fps=atoi(temp);
+    }
   }
   config.close();
 
@@ -49,6 +54,7 @@ int configInfo::readConfig() {
 
 void configInfo::printVars() {
   cout<<"Width: "<<width<<" Height: "<<height<<" Fullscreen: "<<fullscreen<<endl;
+  cout<<"Vsync: "<<vsync<<" Desired FPS: "<<fps<<endl;
 }
 
 int configInfo::setupVideo(SDL_Surface *screen) {
@@ -86,13 +92,13 @@ int configInfo::setupVideo(SDL_Surface *screen) {
   return 0;
 
 }
-int initIO(SDL_Surface *screen) {
+int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
   // Read in data from config file:
-  configInfo mainConfig;
-  mainConfig.readConfig();
-  if (mainConfig.setupVideo(screen) == 1)
+  mainPlayerObj->readConfig();
+  if (mainPlayerObj->setupVideo(screen) == 1)
     return 1;
   
+  mainPlayerObj->printVars();
   // Keyboard/mouse:
   SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
   SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
@@ -104,6 +110,7 @@ static void draw(playerStats *mainPlayerObj) {
   glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
   glClearColor(1,1,0,0); // Set the default fill to yellow
   // Mouse rotation stuff:
+  // This little loop breaks everything after a little while. I wouldn't enable it.
   /*while (1) {
     if (mainPlayerObj->globRot[0] > 360)
       mainPlayerObj->globRot[0]-=360;
@@ -135,6 +142,8 @@ static void mainLoop(playerStats *mainPlayerObj) {
   SDL_Event event;
   float frnt_back=0, lft_rht=0; // Flags for movement
   float xrotrad, yrotrad; // For movement
+  // For fixing the timestep:
+  
   /*
   // ANTI-SIGSEGV
   printf(" globRot[1]: %f, glotbPos[1]: %f, moveSpeed: %f\n", mainPlayerObj->globRot[1], mainPlayerObj->globPos[1], mainPlayerObj->moveSpeed);
@@ -243,7 +252,7 @@ int main(int argv, char *argc[]) {
   SDL_Surface mainWindow;
   playerStats mainPlayerObj;
   
-  if (initIO(&mainWindow) == 1) // Kbd, mouse, video, sound, etc.
+  if (initIO(&mainWindow, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
     return 1;
   mainLoop(&mainPlayerObj);
 

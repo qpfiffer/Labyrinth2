@@ -12,14 +12,6 @@
 #include "shape.h"
 using namespace std;
 
-class playerStats {
- public:
-  playerStats();
-  float globRot[3]; // The camera's rotation at all times
-  float globPos[3]; // The camera's position at all times
-  float moveSpeed;  // The camera's movement speed
-};
-
 class configInfo {
  public:
   configInfo();      // Constructor (duh)
@@ -31,8 +23,17 @@ class configInfo {
   int width, height; // Screen width and height
   int fullscreen;
   int vsync;
+  int fps;
 };
 
-int initIO(SDL_Surface *screen); // Sound, video, keyboard, mouse, etc.
+class playerStats: public configInfo {
+ public:
+  playerStats();
+  float globRot[3]; // The camera's rotation at all times
+  float globPos[3]; // The camera's position at all times
+  float moveSpeed;  // The camera's movement speed
+};
+
+int initIO(SDL_Surface *screen, playerStats *mainPlayerObj); // Sound, video, keyboard, mouse, etc.
 static void draw(playerStats *mainPlayerObj);
 static void mainLoop(playerStats *mainPlayerObj);
