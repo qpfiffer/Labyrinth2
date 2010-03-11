@@ -10,6 +10,10 @@ configInfo::configInfo() {
   currentDrawMode = menu;
 }
 
+const int configInfo::getCurrentFPS() {
+  return fps;
+}
+
 const void configInfo::changeCurrentDrawMode(videoDrawMode type) {
   currentDrawMode = type;
 }

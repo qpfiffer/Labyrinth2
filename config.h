@@ -22,6 +22,7 @@ class configInfo {
   void printVars();  // Prints out vars for debuggings
   const void changeCurrentDrawMode(videoDrawMode type); // change the current draw mode
   const videoDrawMode getCurrentDrawMode();
+  const int getCurrentFPS();
  private:
   videoDrawMode currentDrawMode;
   ifstream config;   // Config file fstream handler
