@@ -16,11 +16,11 @@
 using namespace std;
 
 class playerStats: public configInfo {
- public:
-  playerStats();
-  float globRot[3]; // The camera's rotation at all times
-  float globPos[3]; // The camera's position at all times
-  float moveSpeed;  // The camera's movement speed
+public:
+    playerStats();
+    float globRot[3]; // The camera's rotation at all times
+    float globPos[3]; // The camera's position at all times
+    float moveSpeed;  // The camera's movement speed
 };
 
 int initIO(SDL_Surface *screen, playerStats *mainPlayerObj); // Sound, video, keyboard, mouse, etc.
