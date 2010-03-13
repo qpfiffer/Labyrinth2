@@ -69,17 +69,17 @@ int configInfo::setupVideo(SDL_Surface *screen) {
 
     const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
     if (fullscreen == 1 && currentDrawMode == game) {
-		cout<<"Called on 1"<<endl;
+		//cout<<"Called on 1"<<endl;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL | SDL_FULLSCREEN);
 	}
     else if (fullscreen == 0 && currentDrawMode == game) {
-		cout<<"Called on 2"<<endl;
+		//cout<<"Called on 2"<<endl;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL);
 	}
 	else if (currentDrawMode == menu) {
-		cout<<"Called on 3"<<endl;
+		//cout<<"Called on 3"<<endl;
 		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	}
 	if (screen == NULL)

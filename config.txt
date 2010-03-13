@@ -1,4 +1,4 @@
-width=1024
-height=600
+width=1280
+height=1024
 fullscreen=0
 vsync=1
