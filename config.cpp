@@ -2,8 +2,8 @@
 
 configInfo::configInfo() {
     // Video defaults:
-    width=640;
-    height=480;
+    width=800;
+    height=600;
     fullscreen=0;
     vsync=0;
     fps=60;
@@ -67,19 +67,27 @@ int configInfo::setupVideo(SDL_Surface *screen) {
         return 1;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // Turns double-buffering on
     const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
-    if (fullscreen == 1 && currentDrawMode == game)
+    if (fullscreen == 1 && currentDrawMode == game) {
+		cout<<"Called on 1"<<endl;
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL | SDL_FULLSCREEN);
-    else if (fullscreen == 0 && currentDrawMode == game)
+	}
+    else if (fullscreen == 0 && currentDrawMode == game) {
+		cout<<"Called on 2"<<endl;
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL);
-	else if (currentDrawMode == menu)
+	}
+	else if (currentDrawMode == menu) {
+		cout<<"Called on 3"<<endl;
 		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	}
 	if (screen == NULL)
 		cout<<"Unable to setup SDL_Surface."<<endl;
-	cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
 
     vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
+	//cout<<"From SDL_Surface pointer: Width: "<<screen->w<<" Height: "<<screen->h<<endl;
+	//cout<<"From VideoInfo: Screen w: "<<(int)vidInfo->current_w<<" Screen h: "<<(int)vidInfo->current_h<<endl;
     if (currentDrawMode == game) {
         // OpenGL init:
         glEnable(GL_TEXTURE_2D); // Enable 2D textures

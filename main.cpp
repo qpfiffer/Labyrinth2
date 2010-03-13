@@ -75,7 +75,9 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 
         dest.x = 0;
         dest.y = 0;
-		cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
+		
+		SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 130, 70, 220));		
+		//cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
 		// "Only the x and y in destRect are used, w and h are ignored."
         if (SDL_BlitSurface(image, NULL, SDL_GetVideoSurface(), &dest) == -1)
 			cout<<"Something went wrong with blitsurface."<<endl;
@@ -208,7 +210,8 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
 }
 
 int main(int argv, char *argc[]) {
-    SDL_Surface screen;
+	// I don't know why, but this fixes everything. Goddamn.
+    SDL_Surface *screen = SDL_SetVideoMode(800, 600, 16, SDL_DOUBLEBUF | SDL_HWSURFACE);
     playerStats mainPlayerObj;
 
     // For temporary debugging:
@@ -217,9 +220,10 @@ int main(int argv, char *argc[]) {
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
         mainPlayerObj.changeCurrentDrawMode(game);
-    if (initIO(&screen, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
+
+    if (initIO(screen, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
         return 1;
-    mainLoop(&screen, &mainPlayerObj);
+    mainLoop(screen, &mainPlayerObj);
 
     return 0;
 }
