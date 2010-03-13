@@ -23,8 +23,8 @@ int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
     return 0;
 }
 
-static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
-    if (mainPlayerObj->getCurrentDrawMode() == game) {
+static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {   
+	if (mainPlayerObj->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
         glClearColor(1,1,0,0); // Set the default fill to yellow
@@ -63,7 +63,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
             printf("Unable to load bitmap: %s\n", SDL_GetError());
             exit(1);
         }
-        image = SDL_DisplayFormat(temp);
+        image = SDL_DisplayFormatAlpha(temp);
         SDL_FreeSurface(temp);
 
         SDL_Rect src, dest;
@@ -75,13 +75,13 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 
         dest.x = 0;
         dest.y = 0;
-        dest.w = image->w;
-        dest.h = image->h;
-
-        SDL_BlitSurface(image, &src, screen, &dest);
+		cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
+		// "Only the x and y in destRect are used, w and h are ignored."
+        if (SDL_BlitSurface(image, NULL, SDL_GetVideoSurface(), &dest) == -1)
+			cout<<"Something went wrong with blitsurface."<<endl;
 
         SDL_Flip(screen);
-        SDL_Delay(2500);
+        //SDL_Delay(2500);
 
         SDL_FreeSurface(image);
     }
@@ -208,19 +208,18 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
 }
 
 int main(int argv, char *argc[]) {
-    SDL_Surface mainWindow;
+    SDL_Surface screen;
     playerStats mainPlayerObj;
 
     // For temporary debugging:
-    int menuDisplay = 0;
+    int menuDisplay = 1;
     if (menuDisplay == 1)
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
         mainPlayerObj.changeCurrentDrawMode(game);
-
-    if (initIO(&mainWindow, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
+    if (initIO(&screen, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
         return 1;
-    mainLoop(&mainWindow, &mainPlayerObj);
+    mainLoop(&screen, &mainPlayerObj);
 
     return 0;
 }

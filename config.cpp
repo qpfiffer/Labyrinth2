@@ -69,11 +69,15 @@ int configInfo::setupVideo(SDL_Surface *screen) {
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // Turns double-buffering on
     const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
-
-    if (fullscreen == 1)
-        screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL | SDL_FULLSCREEN);
-    else
-        screen = SDL_SetVideoMode(width, height, vidInfo->vfmt->BitsPerPixel, SDL_OPENGL);
+    if (fullscreen == 1 && currentDrawMode == game)
+        screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL | SDL_FULLSCREEN);
+    else if (fullscreen == 0 && currentDrawMode == game)
+        screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL);
+	else if (currentDrawMode == menu)
+		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	if (screen == NULL)
+		cout<<"Unable to setup SDL_Surface."<<endl;
+	cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
 
     vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
     if (currentDrawMode == game) {
