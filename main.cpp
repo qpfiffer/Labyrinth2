@@ -60,7 +60,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         SDL_Surface *image, *temp;
         temp = IMG_Load("textures/main_menu_top.png");
         if (temp == NULL) {
-            printf("Unable to load bitmap: %s\n", SDL_GetError());
+            printf("Unable to load image: %s\n", SDL_GetError());
             exit(1);
         }
         image = SDL_DisplayFormatAlpha(temp);
@@ -72,16 +72,38 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         src.y = 0;
         src.w = image->w;
         src.h = image->h;
-
-        dest.x = 0;
-        dest.y = 0;
+		
+		// Put it in the middle of the page
+		int placement = (SDL_GetVideoSurface()->w - image->w)/2;
+		if (placement >= 0)
+        	dest.x = placement; // Until we implement scaling, this will center justify the image
+		else
+			dest.x = 0;        
+		dest.y = 0;
 		
 		SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 130, 70, 220));		
 		//cout<<"Screen w: "<<screen->w<<" Screen h:"<<screen->h<<endl;
 		// "Only the x and y in destRect are used, w and h are ignored."
         if (SDL_BlitSurface(image, NULL, SDL_GetVideoSurface(), &dest) == -1)
 			cout<<"Something went wrong with blitsurface."<<endl;
+		
+		temp = IMG_Load("textures/menu.png");
+        if (temp == NULL) {
+            printf("Unable to load image: %s\n", SDL_GetError());
+            exit(1);
+        }
+		SDL_FreeSurface(image);
+		image = SDL_DisplayFormatAlpha(temp);
+		
+		src.w = 227;
+		src.h = image->h;
 
+		placement = SDL_GetVideoSurface()->w/2 - image->w/4;
+        dest.x = placement; // Until we implement scaling, this will center justify the image      
+		dest.y = SDL_GetVideoSurface()->h - image->h;
+		
+        if (SDL_BlitSurface(image, &src, SDL_GetVideoSurface(), &dest) == -1)
+			cout<<"Something went wrong with blitsurface."<<endl;
         SDL_Flip(screen);
         //SDL_Delay(2500);
 
@@ -219,7 +241,7 @@ int main(int argv, char *argc[]) {
     playerStats mainPlayerObj;
 
     // For temporary debugging:
-    int menuDisplay = 0;
+    int menuDisplay = 1;
     if (menuDisplay == 1)
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
