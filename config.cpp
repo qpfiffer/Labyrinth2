@@ -104,6 +104,8 @@ int configInfo::setupVideo(SDL_Surface *screen) {
         glEnable(GL_DEPTH_TEST); //Not sure why we want this enabled
         glDisable(GL_CULL_FACE); //Draw front AND back of polygons
         glLoadIdentity(); // Blank GL_MODELVIEW
+	    SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
+    	SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
         // ---
     }
     return 0;

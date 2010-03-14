@@ -18,8 +18,6 @@ int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
 
     mainPlayerObj->printVars();
     // Keyboard/mouse:
-    SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
-    SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
     return 0;
 }
 
@@ -39,10 +37,10 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
           mainPlayerObj->globRot[1] < 360)
             break;
             }*/
-        glRotatef(mainPlayerObj->globRot[1], 1, 0, 0);
-        glRotatef(mainPlayerObj->globRot[0], 0, 1, 0);
+        glRotatef(mainPlayerObj->globRot[0], 1, 0, 0);
+        glRotatef(mainPlayerObj->globRot[1], 0, 1, 0);
         // Global movement:
-        glTranslatef(-mainPlayerObj->globPos[0], -mainPlayerObj->globPos[1], -mainPlayerObj->globPos[2]);
+        glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // So we have somthing to look at:
         glColor3f(1,0,1);
@@ -53,6 +51,8 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         glColor3f(0,1,1);
         glTranslatef(-2,0,2);
         drawCube(1,1,1);
+
+		
 
         SDL_GL_SwapBuffers();
     } else {
@@ -135,22 +135,22 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                     case SDLK_w:
                         if (frnt_back > 0)
                             frnt_back = 0; // Flag the forward key as pressed, repeat as necesssary
-                        cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
+                        //cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
                         break;
                     case SDLK_s:
                         if (frnt_back < 0)
                             frnt_back = 0;
-                        cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
+                        //cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
                         break;
                     case SDLK_a:
                         if (lft_rht > 0)
                             lft_rht = 0;
-                        cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
+                        //cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
                         break;
                     case SDLK_d:
                         if (lft_rht < 0)
                             lft_rht = 0;
-                        cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
+                        //cout<<"X: "<<mainPlayerObj->globPos[0]<<" Y: "<<mainPlayerObj->globPos[2]<<endl;
                         break;
                     default:
                         // If it is a key we dont have an action for, just:
@@ -160,8 +160,10 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                     // Rotate the camera
                     //cout<<"Xrel: "<<event.motion.xrel<<" Yrel: "<<event.motion.yrel<<endl;
                     if (event.motion.xrel < 100 && event.motion.yrel < 100) {
-                        mainPlayerObj->globRot[0]+=event.motion.xrel;
-                        mainPlayerObj->globRot[1]+=event.motion.yrel;
+						if (mainPlayerObj->globRot[0] + event.motion.yrel > -90 && 
+							mainPlayerObj->globRot[0] + event.motion.yrel < 90)
+							mainPlayerObj->globRot[0]+=event.motion.yrel;
+                        mainPlayerObj->globRot[1]+=event.motion.xrel;
                     }
                     break;
                 case SDL_QUIT:
@@ -174,27 +176,29 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                 // If it is w:
                 yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
                 xrotrad = (mainPlayerObj->globRot[0] / 180 * M_PI);
-                mainPlayerObj->globPos[0] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[1] -= float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
-            } else if (frnt_back == -mainPlayerObj->moveSpeed) {
-                // If it is s:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
-                xrotrad = (mainPlayerObj->globRot[0] / 180 * M_PI);
                 mainPlayerObj->globPos[0] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[1] += float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
             }
+			if (frnt_back == -mainPlayerObj->moveSpeed) {
+                // If it is s:
+                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
+                xrotrad = (mainPlayerObj->globRot[0] / 180 * M_PI);
+                mainPlayerObj->globPos[0] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
+                mainPlayerObj->globPos[2] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
+                mainPlayerObj->globPos[1] -= float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
+            }
             if (lft_rht == mainPlayerObj->moveSpeed) {
                 // If it is a:
                 yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
-                mainPlayerObj->globPos[0] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
-            } else if (lft_rht == -mainPlayerObj->moveSpeed) {
-                // If it is d:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
                 mainPlayerObj->globPos[0] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
+            }
+			if (lft_rht == -mainPlayerObj->moveSpeed) {
+                // If it is d:
+                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
+                mainPlayerObj->globPos[0] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
+                mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
             }
             accumulator -= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC));
 
@@ -215,7 +219,7 @@ int main(int argv, char *argc[]) {
     playerStats mainPlayerObj;
 
     // For temporary debugging:
-    int menuDisplay = 1;
+    int menuDisplay = 0;
     if (menuDisplay == 1)
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
