@@ -98,7 +98,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 		src.w = 227;
 		src.h = image->h;
 
-		placement = SDL_GetVideoSurface()->w/2 - image->w/4;
+		placement = SDL_GetVideoSurface()->w/2 - image->w/4; // woo woo
         dest.x = placement; // Until we implement scaling, this will center justify the image      
 		dest.y = SDL_GetVideoSurface()->h - image->h;
 		
@@ -149,6 +149,7 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                         break;
                     default:
                         // If it is a key we dont have an action for, just:
+						cout<<"GOT A  RANDOM KEY: "<<event.key.keysym.sym<<endl;
                         break;
                     }
                     break; //Gets out of KEYDOWN?
@@ -178,6 +179,7 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                         // If it is a key we dont have an action for, just:
                         break;
                     }
+					break; // Glad we found that.
                 case SDL_MOUSEMOTION:
                     // Rotate the camera
                     //cout<<"Xrel: "<<event.motion.xrel<<" Yrel: "<<event.motion.yrel<<endl;
@@ -223,6 +225,7 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                 mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
             }
             accumulator -= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC));
+			//cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
 
         }
         //printf("frnt_back: %f || left_rht: %f\n", frnt_back, lft_rht);
@@ -241,7 +244,7 @@ int main(int argv, char *argc[]) {
     playerStats mainPlayerObj;
 
     // For temporary debugging:
-    int menuDisplay = 1;
+    int menuDisplay = 0;
     if (menuDisplay == 1)
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
