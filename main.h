@@ -13,6 +13,7 @@
 
 #include "shape.h"
 #include "config.h"
+#include "world.h"
 using namespace std;
 
 class playerStats: public configInfo {

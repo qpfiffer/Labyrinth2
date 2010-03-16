@@ -244,7 +244,11 @@ int main(int argv, char *argc[]) {
     playerStats mainPlayerObj;
 
     // For temporary debugging:
-    int menuDisplay = 0;
+	int menuDisplay;
+	if (argc[1] == NULL)
+		menuDisplay = 0;
+    else
+		menuDisplay = atoi(argc[1]);
     if (menuDisplay == 1)
         mainPlayerObj.changeCurrentDrawMode(menu);
     else
