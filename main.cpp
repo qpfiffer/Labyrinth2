@@ -6,12 +6,18 @@
 
 // Constructors:
 playerStats::playerStats() {
+    // Log file should be made first so other classes can use it
+    myLogFile = new logFile;
+    myLogFile->readLogFile();
+
     int i;
     for (i=0; i<3; i++) {
         globRot[i]=0;
         globPos[i]=0;
     }
     moveSpeed = 0.05;         // The camera's movement speed
+
+    currentRoom = new subRoom(this);
 }
 
 int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
@@ -46,6 +52,10 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         // Global movement:
         glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
+        // Draw the current room:
+        glColor3f(1,0,1);
+        mainPlayerObj->currentRoom->drawRoom();
+        /*
         // So we have somthing to look at:
         glColor3f(1,0,1);
         drawPlane(50, 50);
@@ -54,7 +64,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         drawCube(1,1,1);
         glColor3f(0,1,1);
         glTranslatef(-2,0,2);
-        drawCube(1,1,1);
+        drawCube(1,1,1);*/
 
 		
 
@@ -137,6 +147,9 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) { // Coolest union of structures ever. Holds every event EVER.
                     case SDLK_ESCAPE:
+                        mainPlayerObj->myLogFile->closeLogfile();
+                        delete mainPlayerObj->currentRoom;
+                        delete mainPlayerObj->myLogFile;
                         exit(0);
                         break; // Redundant, but whatever.
                     case SDLK_w:
@@ -243,10 +256,12 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
 }
 
 int main(int argv, char *argc[]) {
+    srand(time(NULL));
+
 	// I don't know why, but this fixes everything. Goddamn.
     SDL_Surface *screen = SDL_SetVideoMode(800, 600, 16, SDL_DOUBLEBUF | SDL_HWSURFACE);
     playerStats mainPlayerObj;
-
+    
     // For temporary debugging:
 	int menuDisplay;
 	if (argc[1] == NULL)

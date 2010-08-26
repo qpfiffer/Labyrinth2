@@ -1,5 +1,6 @@
 #include "config.h"
 
+//CONSTRUCTORS
 configInfo::configInfo() {
     // Video defaults:
     width=800;
@@ -10,6 +11,11 @@ configInfo::configInfo() {
     currentDrawMode = menu;
 }
 
+logFile::logFile() {   
+}
+//PUBLIC METHODS
+
+// CONFIG FILE
 const int configInfo::getCurrentFPS() {
     return fps;
 }
@@ -103,6 +109,18 @@ int configInfo::setupVideo(SDL_Surface *screen) {
         glMatrixMode(GL_MODELVIEW); // Switch back to the good 'ole modelview matrix
         glEnable(GL_DEPTH_TEST); //Not sure why we want this enabled
         glDisable(GL_CULL_FACE); //Draw front AND back of polygons
+
+        // AA
+        GLfloat values[2];
+        glGetFloatv (GL_LINE_WIDTH_GRANULARITY, values);
+        glGetFloatv (GL_LINE_WIDTH_RANGE, values);
+        glEnable (GL_POLYGON_SMOOTH);
+        glEnable (GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glHint (GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+        glLineWidth (1.5); 
+        // End AA
+
         glLoadIdentity(); // Blank GL_MODELVIEW
 	    SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
     	SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
@@ -110,4 +128,33 @@ int configInfo::setupVideo(SDL_Surface *screen) {
     }
     return 0;
 
+}
+
+// LOG FILE
+int logFile::readLogFile() {
+    log.open("lab2.log", ifstream::out);
+    return 0;
+}
+
+/*
+void logFile::Log(string text) {
+    while (log.good()) { // EOF, badbit and failbit
+        log<<text<<endl;
+    }
+}
+void logFile::Warning(string text) {
+    while (log.good()) { // EOF, badbit and failbit
+        log<<"WARNING: "<<text<<endl;
+    }
+}
+void logFile::Error(string text) {
+    while (log.good()) { // EOF, badbit and failbit
+        log<<"ERROR: "<<text<<endl;
+    }
+}*/
+
+int logFile::closeLogfile() {
+    if (log.good())
+        log.close();
+    return 0;
 }

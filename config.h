@@ -31,4 +31,14 @@ private:
     int vsync;
     int fps;
 };
+
+class logFile {
+public:
+    logFile();
+
+    int readLogFile();
+    int closeLogfile();
+
+    ofstream log;
+};
 #endif
