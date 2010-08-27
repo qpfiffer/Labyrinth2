@@ -1,11 +1,15 @@
 #include "shape.h"
 
 void drawPlane(int x, int y) {
+    if (x<1)
+        x=1;
+    if (y<1)
+        y=1;
     glBegin(GL_QUADS);
-    glVertex3f(-x, -1, -y);
-    glVertex3f(-x, -1, y);
-    glVertex3f(x, -1, y);
-    glVertex3f(x, -1, -y);
+    glVertex3f(-x/2, 0, -y/2);
+    glVertex3f(-x/2, 0, y/2);
+    glVertex3f(x/2, 0, y/2);
+    glVertex3f(x/2, 0, -y/2);
     glEnd();
 }
 

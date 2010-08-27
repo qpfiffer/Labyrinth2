@@ -13,9 +13,13 @@ playerStats::playerStats() {
     int i;
     for (i=0; i<3; i++) {
         globRot[i]=0;
-        globPos[i]=0;
+        if (i==2) {
+            globPos[i]=1;
+        } else {
+            globPos[i]=0;
+        }
     }
-    moveSpeed = 0.05;         // The camera's movement speed
+    moveSpeed = 0.1;         // The camera's movement speed
 
     currentRoom = new subRoom(this);
 }
@@ -53,7 +57,6 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // Draw the current room:
-        glColor3f(1,0,1);
         mainPlayerObj->currentRoom->drawRoom();
         /*
         // So we have somthing to look at:
