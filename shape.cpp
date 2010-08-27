@@ -1,6 +1,6 @@
 #include "shape.h"
 
-void drawPlane(int x, int y) {
+void drawPlane(float x, float y) {
     if (x<1)
         x=1;
     if (y<1)

@@ -28,8 +28,8 @@ subRoom::subRoom(playerStats *playerPassed) {
         }
         boolWallDrawState[i] = 1;
     }
-    playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<dimensions[2]
-                            <<dimensions[1]<<endl;
+    playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<dimensions[1]
+                            <<dimensions[2]<<endl;
 }
 //---
 overRoom::overRoom() {
@@ -40,6 +40,11 @@ void subRoom::generateRoom() {
 }
 
 void subRoom::drawRoom() {
+    
+    dimensions[0] = 3;
+    dimensions[1] = 8;
+    dimensions[2] = 3;
+    
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();
@@ -53,21 +58,21 @@ void subRoom::drawRoom() {
     // -, +
     if (boolWallDrawState[WALL1]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(0, 1.0f, 0.25f);
+        glColor3f(1.0f, 0, 0.25f);
         glTranslatef(-dimensions[0]/2, dimensions[2]/2, 0);
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
-        drawPlane(dimensions[0], dimensions[2]);
+        drawPlane(dimensions[1], dimensions[2]);
         glPopMatrix();
     }
     //+, +
     if (boolWallDrawState[WALL2]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(0, 1.0f, 0.25f);
+        glColor3f(1.0f, 0, 0.25f);
         glTranslatef(dimensions[0]/2, dimensions[2]/2, 0);
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
-        drawPlane(dimensions[0], dimensions[2]);
+        drawPlane(dimensions[1], dimensions[2]);
         glPopMatrix();
     }
     //+, -

@@ -6,6 +6,6 @@
 #include <cstdlib>
 
 void drawface();
-void drawPlane(int x, int y);
+void drawPlane(float x, float y);
 void drawCube(float x, float y, float z);
 #endif
