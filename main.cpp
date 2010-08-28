@@ -14,7 +14,7 @@ playerStats::playerStats() {
     for (i=0; i<3; i++) {
         globRot[i]=0;
         if (i==1) {
-            globPos[i]=1;
+            globPos[i]=-1;
         } else {
             globPos[i]=0;
         }

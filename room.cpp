@@ -1,13 +1,15 @@
 #include "room.h"
 #define FLOOR 0
-#define WALL1 0 // -x, +z
-#define WALL2 0 // +x, +z
-#define WALL3 0 // +x, -z
-#define WALL4 0 // -x, -z
-#define CEILING 0
+#define WALL1 1 // -x, +z
+#define WALL2 2 // +x, +z
+#define WALL3 3 // +x, -z
+#define WALL4 4 // -x, -z
+#define CEILING 5
 
 // CONSTRUCTORS
+// We probably shouldn't be calling the default constructor
 subRoom::subRoom() {
+    myGlobalCenter = new float[3];
     numDoors = rand() % 6 + 2;
     int i;
     for (i=0;i<6;i++) {
@@ -15,11 +17,13 @@ subRoom::subRoom() {
             dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
+        myGlobalCenter[i] = 0.0f;
     }
 }
 
 subRoom::subRoom(playerStats *playerPassed) {
     playerHandle = playerPassed; // Store the player handle
+    myGlobalCenter = new float[3];
     numDoors = rand() % 6 + 2;
     int i;
     for (i=0;i<6;i++) {
@@ -27,6 +31,7 @@ subRoom::subRoom(playerStats *playerPassed) {
             dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
+        myGlobalCenter[i] = 0.0f;
     }
     playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
                             <<", "<<dimensions[2]<<endl;
@@ -40,11 +45,13 @@ void subRoom::generateRoom() {
 }
 
 void subRoom::drawRoom() {
-    
+    // Make sure we are where we are supposed to be:
+    glTranslatef(myGlobalCenter[0], myGlobalCenter[1], myGlobalCenter[2]);
+    /*
     dimensions[0] = 3;
     dimensions[1] = 8;
     dimensions[2] = 3;
-    
+    */
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();
@@ -101,4 +108,31 @@ void subRoom::drawRoom() {
         drawPlane(dimensions[0], dimensions[1]);
         glPopMatrix();
     }
+}
+
+int subRoom::GetWallDrawState(int wall) {
+    return boolWallDrawState[wall];
+}
+
+void subRoom::SetWallDrawState(int wall, int setting) {
+    if (setting != 0 && setting != 1) {
+        // Fail silently
+        return;
+    } else {
+        boolWallDrawState[wall] = setting;
+        return;
+    }
+}
+
+float *subRoom::GetGlobalCenter() {
+    return myGlobalCenter;
+}
+
+void subRoom::SetGlobalCenter(float *newGlobalCenter) {
+    myGlobalCenter = newGlobalCenter;
+}
+
+// DECONSTRUCTORS
+subRoom::~subRoom() {
+    delete [] myGlobalCenter;
 }

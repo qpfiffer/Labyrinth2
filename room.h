@@ -9,13 +9,18 @@ class subRoom {
 public:
     subRoom();
     subRoom(playerStats *playerPassed);
+    ~subRoom();
 
     void generateRoom();
     void drawRoom();
 
-    void GetWallDrawState(int wall);
+    int GetWallDrawState(int wall);
     void SetWallDrawState(int wall, int setting);
+
+    float *GetGlobalCenter();
+    void SetGlobalCenter(float *newGlobalCenter); // Is an array better?
 private:
+    float *myGlobalCenter; // X, Y, Z offset of the current room
     playerStats *playerHandle;
     int numDoors;
     // Lets do doors later. First we do rooms.
