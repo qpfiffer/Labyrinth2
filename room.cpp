@@ -12,7 +12,7 @@ subRoom::subRoom() {
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
-            dimensions[i] = rand() % 10 + 1;
+            dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
     }
@@ -24,12 +24,12 @@ subRoom::subRoom(playerStats *playerPassed) {
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
-            dimensions[i] = rand() % 10 + 1;
+            dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
     }
-    playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<dimensions[1]
-                            <<dimensions[2]<<endl;
+    playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
+                            <<", "<<dimensions[2]<<endl;
 }
 //---
 overRoom::overRoom() {
@@ -40,11 +40,11 @@ void subRoom::generateRoom() {
 }
 
 void subRoom::drawRoom() {
-    
+    /*
     dimensions[0] = 3;
     dimensions[1] = 8;
     dimensions[2] = 3;
-    
+    */
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();

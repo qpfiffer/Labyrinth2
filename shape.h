@@ -7,5 +7,6 @@
 
 void drawface();
 void drawPlane(float x, float y);
+void drawVertPlane(float x, float y);
 void drawCube(float x, float y, float z);
 #endif

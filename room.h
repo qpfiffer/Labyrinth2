@@ -20,7 +20,7 @@ private:
     int numDoors;
     // Lets do doors later. First we do rooms.
     // X, Y, Z
-    int dimensions[3];
+    float dimensions[3];
     // This specifies if we should avoid drawing a wall:
     int boolWallDrawState[6];
 };
