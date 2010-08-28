@@ -40,11 +40,11 @@ void subRoom::generateRoom() {
 }
 
 void subRoom::drawRoom() {
-    /*
+    
     dimensions[0] = 3;
     dimensions[1] = 8;
     dimensions[2] = 3;
-    */
+    
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();

@@ -13,13 +13,13 @@ playerStats::playerStats() {
     int i;
     for (i=0; i<3; i++) {
         globRot[i]=0;
-        if (i==2) {
+        if (i==1) {
             globPos[i]=1;
         } else {
             globPos[i]=0;
         }
     }
-    moveSpeed = 0.1;         // The camera's movement speed
+    moveSpeed = 0.1f;         // The camera's movement speed
 
     currentRoom = new subRoom(this);
 }
@@ -131,7 +131,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
     SDL_Event event;
     float frnt_back=0, lft_rht=0; // Flags for movement
-    float xrotrad, yrotrad; // For movement
+    float xrotrad=0.0f, yrotrad=0.0f; // For movement
     // For fixing the timestep:
     clock_t currentTime, newTime, deltaTime;
     currentTime=clock(); // Set current time to... the current time.
@@ -218,29 +218,29 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
             // Debug showing movement flag values:
             if (frnt_back == mainPlayerObj->moveSpeed) {
                 // If it is w:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
-                xrotrad = (mainPlayerObj->globRot[0] / 180 * M_PI);
+                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
+                xrotrad = (float)(mainPlayerObj->globRot[0] / 180 * M_PI);
                 mainPlayerObj->globPos[0] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[1] += float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
             }
 			if (frnt_back == -mainPlayerObj->moveSpeed) {
                 // If it is s:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
-                xrotrad = (mainPlayerObj->globRot[0] / 180 * M_PI);
+                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
+                xrotrad = (float)(mainPlayerObj->globRot[0] / 180 * M_PI);
                 mainPlayerObj->globPos[0] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[1] -= float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
             }
             if (lft_rht == mainPlayerObj->moveSpeed) {
                 // If it is a:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
+                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
                 mainPlayerObj->globPos[0] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
             }
 			if (lft_rht == -mainPlayerObj->moveSpeed) {
                 // If it is d:
-                yrotrad = (mainPlayerObj->globRot[1] / 180 * M_PI);
+                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
                 mainPlayerObj->globPos[0] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
                 mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
             }
