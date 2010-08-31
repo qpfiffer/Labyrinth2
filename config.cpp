@@ -97,6 +97,7 @@ int configInfo::setupVideo(SDL_Surface *screen) {
     if (currentDrawMode == game) {
         // OpenGL init:
         glEnable(GL_TEXTURE_2D); // Enable 2D textures
+        glShadeModel(GL_SMOOTH);
         glViewport(0, 0, vidInfo->current_w, vidInfo->current_h);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -108,17 +109,18 @@ int configInfo::setupVideo(SDL_Surface *screen) {
 
         glMatrixMode(GL_MODELVIEW); // Switch back to the good 'ole modelview matrix
         glEnable(GL_DEPTH_TEST); //Not sure why we want this enabled
+        glDepthFunc(GL_LEQUAL);  // This has to to with the above
         glDisable(GL_CULL_FACE); //Draw front AND back of polygons
 
         // AA
-        GLfloat values[2];
+        /*GLfloat values[2];
         glGetFloatv (GL_LINE_WIDTH_GRANULARITY, values);
         glGetFloatv (GL_LINE_WIDTH_RANGE, values);
         glEnable (GL_POLYGON_SMOOTH);
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glHint (GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-        glLineWidth (1.5); 
+        glLineWidth (1.5); */
         // End AA
 
         glLoadIdentity(); // Blank GL_MODELVIEW

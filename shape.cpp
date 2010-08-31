@@ -1,15 +1,80 @@
 #include "shape.h"
 
+GLuint getTextureHandle(const char *name) {
+    // Help for this section credited to GPwiki
+    GLuint texture;			
+    SDL_Surface *surface;
+    GLenum texture_format;
+    GLint  nOfColors;
+
+    if ( (surface = IMG_Load(name)) ) {
+        nOfColors = surface->format->BytesPerPixel;
+        if (nOfColors == 4)     // contains an alpha channel
+        {
+                if (surface->format->Rmask == 0x000000ff)
+                        texture_format = GL_RGBA;
+                else
+                        texture_format = GL_BGRA;
+        } else if (nOfColors == 3)     // no alpha channel
+        {
+                if (surface->format->Rmask == 0x000000ff)
+                        texture_format = GL_RGB;
+                else
+                        texture_format = GL_BGR;
+        } else {
+                printf("warning: the image is not truecolor..  this will probably break\n");
+                // this error should not go unhandled
+        }
+
+        glGenTextures( 1, &texture ); // Prepare the texture
+        glBindTexture( GL_TEXTURE_2D, texture ); 
+
+        // Get the PNGs properties from SDL and apply them to the image
+        glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+                      texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    } else {
+        printf("Could not load image.\n");
+        return -1;
+    }
+    if (surface)
+        SDL_FreeSurface(surface);
+
+    return texture;
+}
+
+void drawPlaneTex(float x, float y, GLuint texture) {
+    if (x<1)
+        x=1;
+    if (y<1)
+        y=1;
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-x/2, 0, -y/2);
+
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-x/2, 0, y/2);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(x/2, 0, y/2);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(x/2, 0, -y/2);
+    glEnd();
+}
+
 void drawPlane(float x, float y) {
     if (x<1)
         x=1;
     if (y<1)
         y=1;
     glBegin(GL_QUADS);
-    glVertex3f(-x/2, 0, -y/2);
-    glVertex3f(-x/2, 0, y/2);
-    glVertex3f(x/2, 0, y/2);
-    glVertex3f(x/2, 0, -y/2);
+        glVertex3f(-x/2, 0, -y/2);
+        glVertex3f(-x/2, 0, y/2);
+        glVertex3f(x/2, 0, y/2);
+        glVertex3f(x/2, 0, -y/2);
     glEnd();
 }
 

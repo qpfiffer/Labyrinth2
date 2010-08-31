@@ -58,16 +58,6 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // Draw the current room:
         mainPlayerObj->currentRoom->drawRoom();
-        /*
-        // So we have somthing to look at:
-        glColor3f(1,0,1);
-        drawPlane(50, 50);
-        glColor3f(1,0,0);
-        glTranslatef(0,0,-5);
-        drawCube(1,1,1);
-        glColor3f(0,1,1);
-        glTranslatef(-2,0,2);
-        drawCube(1,1,1);*/
 
 		
 
@@ -93,7 +83,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 		// Put it in the middle of the page
 		int placement = (SDL_GetVideoSurface()->w - image->w)/2;
 		if (placement >= 0)
-        	dest.x = placement; // Until we implement scaling, this will center justify the image
+        	dest.x = placement; 
 		else
 			dest.x = 0;        
 		dest.y = 0;
@@ -148,7 +138,8 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
             while(SDL_PollEvent(&event)) { // Keep going until there are no more pending events
                 switch (event.type) {
                 case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) { // Coolest union of structures ever. Holds every event EVER.
+                    // Coolest union of structures ever. Holds every event EVER.
+                    switch (event.key.keysym.sym) { 
                     case SDLK_ESCAPE:
                         mainPlayerObj->myLogFile->closeLogfile();
                         delete mainPlayerObj->currentRoom;
@@ -156,7 +147,8 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                         exit(0);
                         break; // Redundant, but whatever.
                     case SDLK_w:
-                        frnt_back = mainPlayerObj->moveSpeed; // Flag the forward key as pressed, repeat as necesssary
+                        // Flag the forward key as pressed, repeat as necesssary
+                        frnt_back = mainPlayerObj->moveSpeed; 
                         break;
                     case SDLK_s:
                         frnt_back = -(mainPlayerObj->moveSpeed);

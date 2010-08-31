@@ -11,7 +11,7 @@ public:
     subRoom(playerStats *playerPassed);
     ~subRoom();
 
-    void generateRoom();
+    void createChildRoom();
     void drawRoom();
 
     int GetWallDrawState(int wall);
@@ -28,6 +28,9 @@ private:
     float dimensions[3];
     // This specifies if we should avoid drawing a wall:
     int boolWallDrawState[6];
+    // Holds handles to textures that the room uses.
+    // (floor, wall and ceiling)
+    GLuint roomTextures[3];
 };
 class overRoom {
 public:

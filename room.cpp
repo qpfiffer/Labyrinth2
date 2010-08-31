@@ -19,6 +19,10 @@ subRoom::subRoom() {
         boolWallDrawState[i] = 1;
         myGlobalCenter[i] = 0.0f;
     }
+    roomTextures[0] = getTextureHandle("./textures/dev_orange.png");
+    // Because I've got nothing else to use:
+    roomTextures[1] = getTextureHandle("./textures/blacktop.png");
+    roomTextures[2] = getTextureHandle("./textures/face.png");
 }
 
 subRoom::subRoom(playerStats *playerPassed) {
@@ -33,16 +37,38 @@ subRoom::subRoom(playerStats *playerPassed) {
         boolWallDrawState[i] = 1;
         myGlobalCenter[i] = 0.0f;
     }
+    roomTextures[0] = getTextureHandle("./textures/dev_orange.png");
+    // Because I've got nothing else to use:
+    roomTextures[1] = getTextureHandle("./textures/blacktop.png");
+    roomTextures[2] = getTextureHandle("./textures/face.png");
     playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
                             <<", "<<dimensions[2]<<endl;
+    playerPassed->myLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
+                            <<", "<<roomTextures[2]<<endl;
 }
 //---
 overRoom::overRoom() {
 }
 //---
 // PUBLIC METHODS
-void subRoom::generateRoom() {
-}
+//Will come back to this. Should work on overRooms first.
+/*
+void subRoom::createChildRoom() {
+    subRoom *pHandle;
+    int i=0;
+    // Iterate through our list of child rooms until
+    // we get a free one
+    while (pHandle == NULL && i < 6) {
+        pHandle = childRoom[i];
+        i++;
+    }
+    if (i == 6) {
+        // DESTROY OLD CHILD
+        // CLOSE DOOR
+        // TAKE SPOT
+        pHandle = childRoom
+
+}*/
 
 void subRoom::drawRoom() {
     // Make sure we are where we are supposed to be:
@@ -56,8 +82,12 @@ void subRoom::drawRoom() {
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();
         //glColor3f((float)1/(rand()%255), (float)1/(rand()%255), (float)1/(rand()%255));
-        glColor3f(1.0f, 0, 1.0f);
-        drawPlane(dimensions[0], dimensions[1]);
+        if (roomTextures[0] != -1) {
+            drawPlaneTex(dimensions[0], dimensions[1], roomTextures[0]);
+        } else {
+            glColor3f(1.0f, 0, 1.0f);
+            drawPlane(dimensions[0], dimensions[1]);
+        }
         glPopMatrix();
     }
     
@@ -65,47 +95,72 @@ void subRoom::drawRoom() {
     // -, +
     if (boolWallDrawState[WALL1]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(1.0f, 0, 0.25f);
         glTranslatef(-dimensions[0]/2, dimensions[2]/2, 0);
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
-        drawPlane(dimensions[1], dimensions[2]);
+        if (roomTextures[1] != -1) {
+            drawPlaneTex(dimensions[1], dimensions[2], roomTextures[1]);
+        } else {
+            glColor3f(1.0f, 0, 0.25f);
+            drawPlane(dimensions[1], dimensions[2]);
+        }
         glPopMatrix();
     }
     //+, +
     if (boolWallDrawState[WALL2]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(1.0f, 0, 0.25f);
+        
         glTranslatef(dimensions[0]/2, dimensions[2]/2, 0);
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
-        drawPlane(dimensions[1], dimensions[2]);
+        if (roomTextures[1] != -1) {
+            drawPlaneTex(dimensions[1], dimensions[2], roomTextures[1]);
+        } else {
+            glColor3f(1.0f, 0, 0.25f);
+            drawPlane(dimensions[1], dimensions[2]);
+        }
         glPopMatrix();
     }
     //+, -
     if (boolWallDrawState[WALL3]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(0, 1.0f, 0.25f);
+        
         glTranslatef(0, dimensions[2]/2, -dimensions[1]/2);
         glRotatef(90, 1,0,0);
-        drawPlane(dimensions[0], dimensions[2]);
+        if (roomTextures[1] != -1) {
+            drawPlaneTex(dimensions[0], dimensions[2], roomTextures[1]);
+        } else {
+            glColor3f(0, 1.0f, 0.25f);
+            drawPlane(dimensions[0], dimensions[2]);
+        }
+
         glPopMatrix();
     }
     // -, -
     if (boolWallDrawState[WALL4]) {
         glPushMatrix(); // SO USEFUL I LOVE YOU
-        glColor3f(0, 1.0f, 0.25f);
+        
         glTranslatef(0, dimensions[2]/2, dimensions[1]/2);
         glRotatef(90, 1,0,0);
-        drawPlane(dimensions[0], dimensions[2]);
+        if (roomTextures[1] != -1) {
+            drawPlaneTex(dimensions[0], dimensions[2], roomTextures[1]);
+        } else {
+            glColor3f(0, 1.0f, 0.25f);
+            drawPlane(dimensions[0], dimensions[2]);
+        }
         glPopMatrix();
     }
 
     if (boolWallDrawState[CEILING]) {
         glPushMatrix();
-        glColor3f(0.5f, 0.75f, 0);
+        
         glTranslatef(0,dimensions[2], 0);
-        drawPlane(dimensions[0], dimensions[1]);
+        if (roomTextures[2] != -1) {
+            drawPlaneTex(dimensions[0], dimensions[1], roomTextures[2]);
+        } else {
+            glColor3f(0.5f, 0.75f, 0);
+            drawPlane(dimensions[0], dimensions[1]);
+        }
         glPopMatrix();
     }
 }
