@@ -6,11 +6,29 @@
 #define WALL4 4 // -x, -z
 #define CEILING 5
 
-// CONSTRUCTORS
-// We probably shouldn't be calling the default constructor
+// CONSTRUCTORS:
+// ---------------------------
+// DOOR CONTAINER CONSTRUCTORS
+doorContainer::doorContainer() {
+    numRealDoors = 0; // to be implimented later
+    numFakeDoors = (rand() % 4 + 1); 
+    fakeDoors = new door[numFakeDoors];
+    int i;
+    for(i=0;i<numFakeDoors;i++) {
+        fakeDoors[i].x = 0;
+        //fakeDoors[i].y = 0;
+        fakeDoors[i].myWall = (rand() % 4 +1); // Pick a random wall
+        // TODO: write a nice little random door chooser
+        // here with sprintf. e.g. door_(rand).png
+        fakeDoors[i].fDoorTex = "./textures/door_1.png";
+        // Make sure the texture handle is null:
+        fakeDoors[i].fDoorTexHandle[0] = 0;
+    }
+}
+
+// SUB-ROOM CONSTRUCTORS
 subRoom::subRoom() {
     myGlobalCenter = new float[3];
-    numDoors = rand() % 6 + 2;
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
@@ -25,7 +43,7 @@ subRoom::subRoom() {
 subRoom::subRoom(playerStats *playerPassed) {
     playerHandle = playerPassed; // Store the player handle
     myGlobalCenter = new float[3];
-    numDoors = rand() % 6 + 2;
+    myDoors = new doorContainer;
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
@@ -40,32 +58,47 @@ subRoom::subRoom(playerStats *playerPassed) {
     playerPassed->myLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
                             <<", "<<roomTextures[2]<<endl;
 }
-//---
+
 overRoom::overRoom() {
 }
-//---
+
 // PUBLIC METHODS
-//Will come back to this. Should work on overRooms first.
-/*
-void subRoom::createChildRoom() {
-    subRoom *pHandle;
-    int i=0;
-    // Iterate through our list of child rooms until
-    // we get a free one
-    while (pHandle == NULL && i < 6) {
-        pHandle = childRoom[i];
-        i++;
-    }
-    if (i == 6) {
-        // DESTROY OLD CHILD
-        // CLOSE DOOR
-        // TAKE SPOT
-        pHandle = childRoom
+//----------------------
+// DOOR CONTAINER PUBLIC
+void doorContainer::initFakeDoor(int door) {
+    glGenTextures(1, &(fakeDoors[door].fDoorTexHandle[0]));
+    getTextureHandle(fakeDoors[door].fDoorTex, fakeDoors[door].fDoorTexHandle);
+}
 
-}*/
-
+// SUB-ROOM PUBLIC
 void subRoom::drawRoom() {
-    // Check to see if we have generated our texturse yet:
+    // COMPLEX ROOM DRAWING FUNCTION GOES HERE
+
+    // Manage our doors, make sure they're setup
+    int i;
+    for (i=0;i<myDoors->numFakeDoors;i++) {
+        if (myDoors->fakeDoors[i].fDoorTexHandle == 0) {
+            // If the door picked a wall that isnt being drawn:
+            while (!boolWallDrawState[myDoors->fakeDoors[i].myWall]) {
+                // This is a shitty way to do this
+                myDoors->fakeDoors[i].myWall = (rand() % 6); // Pick a new wall
+            }
+            // Generate the texture(s)
+            myDoors->initFakeDoor(i);
+            // Pick where to randomly put the door:
+            if (myDoors->fakeDoors[i].myWall == WALL1 ||
+                myDoors->fakeDoors[i].myWall == WALL2) {
+                myDoors->fakeDoors[i].x = (rand() % (int)dimensions[1] + 1);
+            }
+
+            if (myDoors->fakeDoors[i].myWall == WALL3 ||
+                myDoors->fakeDoors[i].myWall == WALL4) {
+                myDoors->fakeDoors[i].x = (rand() % (int)dimensions[0] + 1);
+            }
+        }
+    }
+
+    // Check to see if we have generated our textures yet:
     if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
         glGenTextures( 3, &roomTextures[0] );
          // Prepare the texture
@@ -75,13 +108,10 @@ void subRoom::drawRoom() {
         getTextureHandle("./textures/face.png", &roomTextures[2]);
         printf("GLError: %i\n", glGetError());
     }
+
     // Make sure we are where we are supposed to be:
     glTranslatef(myGlobalCenter[0], myGlobalCenter[1], myGlobalCenter[2]);
-    /*
-    dimensions[0] = 3;
-    dimensions[1] = 8;
-    dimensions[2] = 3;
-    */
+
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
         glPushMatrix();
@@ -193,5 +223,16 @@ void subRoom::SetGlobalCenter(float *newGlobalCenter) {
 
 // DECONSTRUCTORS
 subRoom::~subRoom() {
-    delete [] myGlobalCenter;
+    /*if (myGlobalCenter) {
+        delete [] myGlobalCenter;
+        myGlobalCenter = 0;
+    }*/
+    delete myDoors;
+}
+
+doorContainer::~doorContainer() {
+    delete [] fakeDoors;
+    fakeDoors = 0;
+    delete [] realDoors;
+    realDoors = 0;
 }

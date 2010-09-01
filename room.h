@@ -2,9 +2,37 @@
 #define _ROOM_H
 #include "main.h"
 
-
-// A sub room is what a complex multiSimple is made out of
+// Wu-tang clan ain't nothin t'fuck with
 class playerStats;
+
+struct door {
+    int x;
+    int y;
+    int myWall;
+    // Fake doors:
+    char *fDoorTex;
+    GLuint fDoorTexHandle[1];
+    // Real doors:
+    // ---
+    // CODE GOES HERE
+    // ---
+};
+
+class doorContainer {
+public:
+    doorContainer();
+    ~doorContainer();
+
+    int numRealDoors;
+    int numFakeDoors;
+
+    void initFakeDoor(int door);
+    
+    // Dynamic arrays:
+    door *realDoors;
+    door *fakeDoors;
+};
+
 class subRoom {
 public:
     subRoom();
@@ -22,7 +50,7 @@ public:
 private:
     float *myGlobalCenter; // X, Y, Z offset of the current room
     playerStats *playerHandle;
-    int numDoors;
+    doorContainer *myDoors;
     // Lets do doors later. First we do rooms.
     // X, Y, Z
     float dimensions[3];
@@ -32,6 +60,7 @@ private:
     // (floor, wall and ceiling)
     GLuint roomTextures[3];
 };
+
 class overRoom {
 public:
     overRoom();

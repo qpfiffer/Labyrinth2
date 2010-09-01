@@ -77,16 +77,16 @@ int configInfo::setupVideo(SDL_Surface *screen) {
     if (fullscreen == 1 && currentDrawMode == game) {
 		//cout<<"Called on 1"<<endl;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL | SDL_FULLSCREEN);
+        screen = SDL_SetVideoMode(width, height, 32, SDL_OPENGL | SDL_FULLSCREEN);
 	}
     else if (fullscreen == 0 && currentDrawMode == game) {
 		//cout<<"Called on 2"<<endl;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        screen = SDL_SetVideoMode(width, height, 16, SDL_OPENGL);
+        screen = SDL_SetVideoMode(width, height, 32, SDL_OPENGL);
 	}
 	else if (currentDrawMode == menu) {
 		//cout<<"Called on 3"<<endl;
-		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+		screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	}
 	if (screen == NULL)
 		cout<<"Unable to setup SDL_Surface."<<endl;
