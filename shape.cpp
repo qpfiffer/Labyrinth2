@@ -50,17 +50,19 @@ void drawPlaneTex(float x, float y, GLuint *texture) {
     if (y<1)
         y=1;
     glBindTexture( GL_TEXTURE_2D, *texture );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-x/2, 0, -y/2);
 
-        glTexCoord2f(0.0f, 1.0f);
+        glTexCoord2f(0.0f, 4.0f);
         glVertex3f(-x/2, 0, y/2);
 
-        glTexCoord2f(1.0f, 1.0f);
+        glTexCoord2f(4.0f, 4.0f);
         glVertex3f(x/2, 0, y/2);
 
-        glTexCoord2f(1.0f, 0.0f);
+        glTexCoord2f(4.0f, 0.0f);
         glVertex3f(x/2, 0, -y/2);
     glEnd();
 }
