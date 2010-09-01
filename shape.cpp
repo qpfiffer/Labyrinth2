@@ -1,8 +1,7 @@
 #include "shape.h"
 
-GLuint getTextureHandle(const char *name) {
-    // Help for this section credited to GPwiki
-    GLuint texture;			
+int getTextureHandle(const char *name, GLuint *texture) {
+    // Help for this section credited to GPwiki		
     SDL_Surface *surface;
     GLenum texture_format;
     GLint  nOfColors;
@@ -26,14 +25,14 @@ GLuint getTextureHandle(const char *name) {
                 // this error should not go unhandled
         }
 
-        glGenTextures( 1, &texture ); // Prepare the texture
-        glBindTexture( GL_TEXTURE_2D, texture ); 
+        //glBindTexture( GL_TEXTURE_2D, *texture ); 
 
         // Get the PNGs properties from SDL and apply them to the image
-        glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
-                      texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+        glBindTexture( GL_TEXTURE_2D, *texture );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+                      texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     } else {
         printf("Could not load image.\n");
         return -1;
@@ -41,15 +40,16 @@ GLuint getTextureHandle(const char *name) {
     if (surface)
         SDL_FreeSurface(surface);
 
-    return texture;
+    printf("Loaded image.\n");
+    return 0;
 }
 
-void drawPlaneTex(float x, float y, GLuint texture) {
+void drawPlaneTex(float x, float y, GLuint *texture) {
     if (x<1)
         x=1;
     if (y<1)
         y=1;
-    glBindTexture( GL_TEXTURE_2D, texture );
+    glBindTexture( GL_TEXTURE_2D, *texture );
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-x/2, 0, -y/2);

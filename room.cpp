@@ -14,15 +14,12 @@ subRoom::subRoom() {
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
+            roomTextures[i] = 0;
             dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
         myGlobalCenter[i] = 0.0f;
     }
-    roomTextures[0] = getTextureHandle("./textures/dev_orange.png");
-    // Because I've got nothing else to use:
-    roomTextures[1] = getTextureHandle("./textures/blacktop.png");
-    roomTextures[2] = getTextureHandle("./textures/face.png");
 }
 
 subRoom::subRoom(playerStats *playerPassed) {
@@ -32,15 +29,12 @@ subRoom::subRoom(playerStats *playerPassed) {
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
+            roomTextures[i] = 0;
             dimensions[i] = (float)(rand() % 10 + 2);
         }
         boolWallDrawState[i] = 1;
         myGlobalCenter[i] = 0.0f;
     }
-    roomTextures[0] = getTextureHandle("./textures/dev_orange.png");
-    // Because I've got nothing else to use:
-    roomTextures[1] = getTextureHandle("./textures/blacktop.png");
-    roomTextures[2] = getTextureHandle("./textures/face.png");
     playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
                             <<", "<<dimensions[2]<<endl;
     playerPassed->myLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
@@ -71,6 +65,16 @@ void subRoom::createChildRoom() {
 }*/
 
 void subRoom::drawRoom() {
+    // Check to see if we have generated our texturse yet:
+    if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
+        glGenTextures( 3, &roomTextures[0] );
+         // Prepare the texture
+        getTextureHandle("./textures/dev_orange.png", &roomTextures[1]);
+        // Because I've got nothing else to use:
+        getTextureHandle("./textures/blacktop.png", &roomTextures[0]);
+        getTextureHandle("./textures/face.png", &roomTextures[2]);
+        printf("GLError: %i\n", glGetError());
+    }
     // Make sure we are where we are supposed to be:
     glTranslatef(myGlobalCenter[0], myGlobalCenter[1], myGlobalCenter[2]);
     /*
@@ -83,7 +87,7 @@ void subRoom::drawRoom() {
         glPushMatrix();
         //glColor3f((float)1/(rand()%255), (float)1/(rand()%255), (float)1/(rand()%255));
         if (roomTextures[0] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[1], roomTextures[0]);
+            drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[0]);
         } else {
             glColor3f(1.0f, 0, 1.0f);
             drawPlane(dimensions[0], dimensions[1]);
@@ -99,7 +103,7 @@ void subRoom::drawRoom() {
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
         if (roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[1], dimensions[2], roomTextures[1]);
+            drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1]);
         } else {
             glColor3f(1.0f, 0, 0.25f);
             drawPlane(dimensions[1], dimensions[2]);
@@ -114,7 +118,7 @@ void subRoom::drawRoom() {
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
         if (roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[1], dimensions[2], roomTextures[1]);
+            drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1]);
         } else {
             glColor3f(1.0f, 0, 0.25f);
             drawPlane(dimensions[1], dimensions[2]);
@@ -128,7 +132,7 @@ void subRoom::drawRoom() {
         glTranslatef(0, dimensions[2]/2, -dimensions[1]/2);
         glRotatef(90, 1,0,0);
         if (roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[2], roomTextures[1]);
+            drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1]);
         } else {
             glColor3f(0, 1.0f, 0.25f);
             drawPlane(dimensions[0], dimensions[2]);
@@ -143,7 +147,7 @@ void subRoom::drawRoom() {
         glTranslatef(0, dimensions[2]/2, dimensions[1]/2);
         glRotatef(90, 1,0,0);
         if (roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[2], roomTextures[1]);
+            drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1]);
         } else {
             glColor3f(0, 1.0f, 0.25f);
             drawPlane(dimensions[0], dimensions[2]);
@@ -156,7 +160,7 @@ void subRoom::drawRoom() {
         
         glTranslatef(0,dimensions[2], 0);
         if (roomTextures[2] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[1], roomTextures[2]);
+            drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[2]);
         } else {
             glColor3f(0.5f, 0.75f, 0);
             drawPlane(dimensions[0], dimensions[1]);
