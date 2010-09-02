@@ -10,7 +10,7 @@ struct door {
     int y;
     int myWall;
     // Fake doors:
-    char *fDoorTex;
+    string fDoorTex;
     GLuint fDoorTexHandle[1];
     bool texturesGenerated;
     // Real doors:

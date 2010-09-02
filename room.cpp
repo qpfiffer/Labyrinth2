@@ -18,9 +18,12 @@ doorContainer::doorContainer() {
         fakeDoors[i].x = 0;
         fakeDoors[i].texturesGenerated = false;
         fakeDoors[i].myWall = (rand() % 5 +1); // Pick a random wall
-        // TODO: write a nice little random door chooser
-        // here with sprintf. e.g. door_(rand).png
-        fakeDoors[i].fDoorTex = "./textures/door_1.png";
+        
+        string temp = "./textures/door_";
+        temp+=itos((rand() % 5 + 1));
+        temp+=".png";
+        printf("String is: %s\n", temp);
+        fakeDoors[i].fDoorTex = temp;
         // Make sure the texture handle is null:
         fakeDoors[i].fDoorTexHandle[0] = 0;
     }
@@ -70,7 +73,7 @@ void doorContainer::initFakeDoor(int door) {
         glGenTextures(1, &(fakeDoors[door].fDoorTexHandle[0]));
         fakeDoors[door].texturesGenerated = true;
     }
-    getTextureHandle(fakeDoors[door].fDoorTex, fakeDoors[door].fDoorTexHandle);
+    getTextureHandle(fakeDoors[door].fDoorTex.c_str(), fakeDoors[door].fDoorTexHandle);
 }
 
 void doorContainer::drawDoors(float dimensions[3]) {
@@ -156,6 +159,7 @@ void subRoom::drawRoom() {
             }
             playerHandle->myLogFile->log<<"Door "<<i<<" generated at "<<myDoors->fakeDoors[i].x
                                         <<" on WALL"<<myDoors->fakeDoors[i].myWall<<endl;
+            playerHandle->myLogFile->log<<"    Uses texture "<<myDoors->fakeDoors[i].fDoorTex<<endl;
         }
     }
 

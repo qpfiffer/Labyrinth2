@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -32,6 +33,7 @@ public:
     logFile *myLogFile;
 };
 
+string itos(int convMe);
 int initIO(SDL_Surface *screen, playerStats *mainPlayerObj); // Sound, video, keyboard, mouse, etc.
 static void draw(SDL_Surface *screen, playerStats *mainPlayerObj);
 static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj);

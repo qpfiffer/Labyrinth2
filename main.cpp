@@ -4,6 +4,13 @@
 #define M_PI 3.14159265358979323846264338327
 #endif
 
+string itos(int convMe) {
+    string converted;
+    stringstream out;
+    out<<convMe;
+    converted = out.str();
+    return converted;
+}
 // Constructors:
 playerStats::playerStats() {
     // Log file should be made first so other classes can use it
