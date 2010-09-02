@@ -12,6 +12,7 @@ struct door {
     // Fake doors:
     char *fDoorTex;
     GLuint fDoorTexHandle[1];
+    bool texturesGenerated;
     // Real doors:
     // ---
     // CODE GOES HERE
@@ -27,6 +28,7 @@ public:
     int numFakeDoors;
 
     void initFakeDoor(int door);
+    void drawDoors(float dimensions[3]);
     
     // Dynamic arrays:
     door *realDoors;

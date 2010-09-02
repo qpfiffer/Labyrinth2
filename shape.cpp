@@ -56,13 +56,13 @@ void drawPlaneTex(float x, float y, GLuint *texture) {
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-x/2, 0, -y/2);
 
-        glTexCoord2f(0.0f, 4.0f);
+        glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-x/2, 0, y/2);
 
-        glTexCoord2f(4.0f, 4.0f);
+        glTexCoord2f(1.0f, 1.0f);
         glVertex3f(x/2, 0, y/2);
 
-        glTexCoord2f(4.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f);
         glVertex3f(x/2, 0, -y/2);
     glEnd();
 }
