@@ -126,6 +126,7 @@ int configInfo::setupVideo(SDL_Surface *screen) {
         glLoadIdentity(); // Blank GL_MODELVIEW
 	    SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
     	SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
+        SDL_WM_SetCaption("Labyrinth 2","Labyrinth 2");
         // ---
     }
     return 0;

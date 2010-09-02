@@ -17,10 +17,10 @@ doorContainer::doorContainer() {
     for(i=0;i<numFakeDoors;i++) {
         fakeDoors[i].x = 0;
         fakeDoors[i].texturesGenerated = false;
-        fakeDoors[i].myWall = (rand() % 5 +1); // Pick a random wall
+        fakeDoors[i].myWall = (rand() % 4 +1); // Pick a random wall
         
         string temp = "./textures/door_";
-        temp+=itos((rand() % 5 + 1));
+        temp+=itos((rand() % 4 + 1));
         temp+=".png";
         printf("String is: %s\n", temp);
         fakeDoors[i].fDoorTex = temp;
@@ -95,17 +95,16 @@ void doorContainer::drawDoors(float dimensions[3]) {
                 // Move it into the correct place
                 glTranslatef(0,0,(float)fakeDoors[i].x);
                 // rotate it so it is facing the right way
-                glRotatef(90, 0, 1, 0);
-                drawVertPlane(1, 2);
+                glRotatef(-90, 0, 1, 0);
+                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
                 //drawPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle);
                 break;
             case WALL2:
                 // This is WALL1 all together
                 glTranslatef(dimensions[0]/2-0.05f, 1, -dimensions[2]/2);
                 glTranslatef(0,0,(float)fakeDoors[i].x);
-                glRotatef(90, 1,0,0);
-                glRotatef(90, 0,0,1);
-                drawPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
+                glRotatef(90, 0,1,0);
+                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
                 break;
             case WALL3:
                 glTranslatef(-dimensions[0], 1, -dimensions[1]/2);
@@ -157,6 +156,8 @@ void subRoom::drawRoom() {
                 myDoors->fakeDoors[i].myWall == WALL4) {
                 myDoors->fakeDoors[i].x = (rand() % (int)(dimensions[0]-1) + 1);
             }
+            playerHandle->myLogFile->log<<"There are "<<myDoors->numFakeDoors<<" fake doors in this"
+                                        <<" room."<<endl;
             playerHandle->myLogFile->log<<"Door "<<i<<" generated at "<<myDoors->fakeDoors[i].x
                                         <<" on WALL"<<myDoors->fakeDoors[i].myWall<<endl;
             playerHandle->myLogFile->log<<"    Uses texture "<<myDoors->fakeDoors[i].fDoorTex<<endl;

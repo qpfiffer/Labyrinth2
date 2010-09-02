@@ -67,6 +67,30 @@ void drawPlaneTex(float x, float y, GLuint *texture, float repeat) {
     glEnd();
 }
 
+void drawVertPlaneTex(float x, float y, GLuint *texture, float repeat) {
+    if (x<1)
+        x=1;
+    if (y<1)
+        y=1;
+    glBindTexture( GL_TEXTURE_2D, *texture );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(x/2, y/2, 0);
+
+        glTexCoord2f(0.0f, repeat);
+        glVertex3f(x/2, -y/2, 0);
+
+        glTexCoord2f(repeat, repeat);
+        glVertex3f(-x/2, -y/2, 0);
+
+        glTexCoord2f(repeat, 0.0f);
+        glVertex3f(-x/2, y/2, 0);
+    glEnd();
+}
+
 void drawPlane(float x, float y) {
     if (x<1)
         x=1;

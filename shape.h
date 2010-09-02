@@ -11,6 +11,7 @@
 int getTextureHandle(const char *name, GLuint *texture);
 
 void drawPlaneTex(float x, float y, GLuint *texture, float repeat);
+void drawVertPlaneTex(float x, float y, GLuint *texture, float repeat);
 void drawPlane(float x, float y);
 void drawVertPlane(float x, float y);
 
