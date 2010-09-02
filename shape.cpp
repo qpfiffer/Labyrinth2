@@ -44,7 +44,7 @@ int getTextureHandle(const char *name, GLuint *texture) {
     return 0;
 }
 
-void drawPlaneTex(float x, float y, GLuint *texture) {
+void drawPlaneTex(float x, float y, GLuint *texture, float repeat) {
     if (x<1)
         x=1;
     if (y<1)
@@ -56,13 +56,13 @@ void drawPlaneTex(float x, float y, GLuint *texture) {
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-x/2, 0, -y/2);
 
-        glTexCoord2f(0.0f, 1.0f);
+        glTexCoord2f(0.0f, repeat);
         glVertex3f(-x/2, 0, y/2);
 
-        glTexCoord2f(1.0f, 1.0f);
+        glTexCoord2f(repeat, repeat);
         glVertex3f(x/2, 0, y/2);
 
-        glTexCoord2f(1.0f, 0.0f);
+        glTexCoord2f(repeat, 0.0f);
         glVertex3f(x/2, 0, -y/2);
     glEnd();
 }
