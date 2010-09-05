@@ -101,26 +101,24 @@ void doorContainer::drawDoors(float dimensions[3]) {
                 break;
             case WALL2:
                 // This is WALL1 all together
-                glTranslatef(dimensions[0]/2-0.05f, 1, -dimensions[2]/2);
+                glTranslatef(dimensions[0]/2-0.05f, 1, -dimensions[1]/2);
                 glTranslatef(0,0,(float)fakeDoors[i].x);
                 glRotatef(90, 0,1,0);
                 drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
                 break;
             case WALL3:
-                glTranslatef(-dimensions[0], 1, -dimensions[1]/2);
+                glTranslatef(-dimensions[0]/2, 1, -dimensions[1]/2+0.05f);
                 //glTranslatef(dimensions[0]/2+0.1f, 1, -dimensions[2]/2);
                 glTranslatef((float)fakeDoors[i].x,0,0);
-                glRotatef(90, 1,0,0);
-                glRotatef(90, 0,0,1);
-                drawPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
+                glRotatef(180, 0,1,0);
+                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
                 break;
             case WALL4:
-                glTranslatef(-dimensions[0], 1, dimensions[1]/2);
+                glTranslatef(-dimensions[0]/2, 1, dimensions[1]/2-0.05f);
                 //glTranslatef(dimensions[0]/2+0.1f, 1, dimensions[2]/2);
                 glTranslatef((float)fakeDoors[i].x,0,0);
-                glRotatef(90, 1,0,0);
-                glRotatef(90, 0,0,1);
-                drawPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
+                //glRotatef(90, 0,0,1);
+                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f);
                 break;
         }
         glPopMatrix();
@@ -134,15 +132,17 @@ void subRoom::drawRoom() {
     // Manage our doors, make sure they're setup
     int i;
     // DEBUG:
-    for (i=3;i<5;i++) {
+    //boolWallDrawState[1] = 0;
+    //boolWallDrawState[2] = 0;
+    /*for (i=4;i<5;i++) {
         boolWallDrawState[i] = 0;
-    }
+    }*/
     for (i=0;i<myDoors->numFakeDoors;i++) {
         if (!myDoors->fakeDoors[i].texturesGenerated) {
             // If the door picked a wall that isnt being drawn:
             while (!boolWallDrawState[myDoors->fakeDoors[i].myWall]) {
                 // This is a shitty way to do this
-                myDoors->fakeDoors[i].myWall = (rand() % 2 + 1); // Pick a new wall
+                myDoors->fakeDoors[i].myWall = (rand() % 3 + 1); // Pick a new wall
             }
             // Generate the texture(s)
             myDoors->initFakeDoor(i);
