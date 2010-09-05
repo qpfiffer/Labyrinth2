@@ -203,10 +203,10 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                     // Rotate the camera
                     //cout<<"Xrel: "<<event.motion.xrel<<" Yrel: "<<event.motion.yrel<<endl;
                     if (event.motion.xrel < 100 && event.motion.yrel < 100) {
-						if (mainPlayerObj->globRot[0] + event.motion.yrel > -90 && 
-							mainPlayerObj->globRot[0] + event.motion.yrel < 90)
-							mainPlayerObj->globRot[0]+=event.motion.yrel;
-                        mainPlayerObj->globRot[1]+=event.motion.xrel;
+						if (mainPlayerObj->globRot[0] + (event.motion.yrel/mainPlayerObj->GetMouseSense()) > -90 && 
+							mainPlayerObj->globRot[0] + (event.motion.yrel/mainPlayerObj->GetMouseSense()) < 90)
+							mainPlayerObj->globRot[0] += (event.motion.yrel/mainPlayerObj->GetMouseSense());
+                        mainPlayerObj->globRot[1]+=(event.motion.xrel/mainPlayerObj->GetMouseSense());
                     }
                     break;
                 case SDL_QUIT:

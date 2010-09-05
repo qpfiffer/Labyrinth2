@@ -1,4 +1,5 @@
-width=1680
-height=1050
-fullscreen=1
+width=1280
+height=1024
+fullscreen=0
 vsync=1
+mouse_sense=2.0

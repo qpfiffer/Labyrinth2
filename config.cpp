@@ -9,6 +9,7 @@ configInfo::configInfo() {
     vsync=0;
     fps=60;
     currentDrawMode = menu;
+    mouse_sense=1.0f;
 }
 
 logFile::logFile() {   
@@ -54,6 +55,10 @@ int configInfo::readConfig() {
         if (strcmp(temp, "fps") == 0) {
             config.getline(temp, 10, '\n');
             fps=atoi(temp);
+        }
+        if (strcmp(temp, "mouse_sense") == 0) {
+            config.getline(temp, 10, '\n');
+            mouse_sense=atof(temp);
         }
     }
     config.close();

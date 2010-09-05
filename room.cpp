@@ -168,10 +168,10 @@ void subRoom::drawRoom() {
     if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
         glGenTextures( 3, &roomTextures[0] );
          // Prepare the texture
-        getTextureHandle("./textures/dev_orange.png", &roomTextures[1]);
+        getTextureHandle("./textures/wall_1.png", &roomTextures[1]);
         // Because I've got nothing else to use:
-        getTextureHandle("./textures/blacktop.png", &roomTextures[0]);
-        getTextureHandle("./textures/face.png", &roomTextures[2]);
+        getTextureHandle("./textures/floor_1.png", &roomTextures[0]);
+        getTextureHandle("./textures/ceiling_1.png", &roomTextures[2]);
         printf("GLError: %i\n", glGetError());
     }
     

@@ -23,6 +23,7 @@ public:
     const void changeCurrentDrawMode(videoDrawMode type); // change the current draw mode
     const videoDrawMode getCurrentDrawMode();
     const int getCurrentFPS();
+    const float GetMouseSense() { return mouse_sense; };
 private:
     videoDrawMode currentDrawMode;
     ifstream config;   // Config file fstream handler
@@ -30,6 +31,7 @@ private:
     int fullscreen;
     int vsync;
     int fps;
+    float mouse_sense;
 };
 
 class logFile {
