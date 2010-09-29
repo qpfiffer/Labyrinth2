@@ -21,7 +21,7 @@ playerStats::playerStats() {
     for (i=0; i<3; i++) {
         globRot[i]=0;
         if (i==1) {
-            globPos[i]=-1;
+            globPos[i]=-2;
         } else {
             globPos[i]=0;
         }
@@ -46,7 +46,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
 	if (mainPlayerObj->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
-        glClearColor(1,1,0,0); // Set the default fill to yellow
+        glClearColor(0,0,0,0); // Set the default fill to yellow
         // Mouse rotation stuff:
         // This little loop breaks everything after a little while. I wouldn't enable it.
         /*while (1) {
@@ -244,16 +244,15 @@ static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
                 mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
             }
             accumulator -= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC));
+            // Lets not fall through the floor:
+            float *tempGlobalCent = mainPlayerObj->currentRoom->GetGlobalCenter();
+            if (mainPlayerObj->globPos[1] > (tempGlobalCent[1]+1)) {
+                mainPlayerObj->globPos[1]-=1;
+            }
 			//cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
 
         }
-        //printf("frnt_back: %f || left_rht: %f\n", frnt_back, lft_rht);
-        //mainPlayerObj->globPos[1] += frnt_back;
-        //mainPlayerObj->globPos[0] += lft_rht;
-        // Prints the position of the player:
-        //printf("x: %f y: %f z: %f\n", globPos[0], globPos[1], globPos[2]);
         draw(screen, mainPlayerObj); // Updates the screen
-        //SDL_Delay(50); // Wait 50ms, probably not necessary
     }
 }
 
