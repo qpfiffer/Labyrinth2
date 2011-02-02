@@ -9,11 +9,10 @@
 // CONSTRUCTORS:
 // ---------------------------
 // DOOR CONTAINER CONSTRUCTORS
-doorContainer::doorContainer() {
-    numRealDoors = 0; // to be implimented later
-    numFakeDoors = (rand() % 4 + 1); 
-    fakeDoors = new door[numFakeDoors];
-	int i;
+doorContainer::doorContainer(): 
+    numRealDoors(0), numFakeDoors((rand() % 4 + 1)), 
+    realDoors(0), fakeDoors(new door[numFakeDoors]) {
+    int i;
     for(i=0;i<numFakeDoors;i++) {
         fakeDoors[i].x = 0;
         fakeDoors[i].texturesGenerated = false;
@@ -30,33 +29,31 @@ doorContainer::doorContainer() {
 }
 
 // SUB-ROOM CONSTRUCTORS
-subRoom::subRoom() {
-    myGlobalCenter = new float[3];
-    myDoors = 0;
+subRoom::subRoom(): 
+        myGlobalCenter(new float[3]), playerHandle(0), //myDoors(new doorContainer),
+        dimensions(new float[3]), boolWallDrawState(new int[6]), roomTextures(new GLuint[3]) {
 	int i;
     for (i=0;i<6;i++) {
         if (i<3) {
             roomTextures[i] = 0;
             dimensions[i] = (float)(rand() % 10 + 2);
+            myGlobalCenter[i] = 0.0f;
         }
         boolWallDrawState[i] = 1;
-        myGlobalCenter[i] = 0.0f;
     }
 }
 
-subRoom::subRoom(playerStats *playerPassed) {
-    playerHandle = playerPassed; // Store the player handle
-    //if (!myGlobalCenter)
-		myGlobalCenter = new float[3];
-    myDoors = new doorContainer;
+subRoom::subRoom(playerStats *playerPassed): 
+        myGlobalCenter(new float[3]), playerHandle(playerPassed), //myDoors(new doorContainer),
+        dimensions(new float[3]), boolWallDrawState(new int[6]), roomTextures(new GLuint[3]) {
     int i;
     for (i=0;i<6;i++) {
         if (i<3) {
             roomTextures[i] = 0;
             dimensions[i] = (float)(rand() % 10 + 2);
+            myGlobalCenter[i] = 0.0f;
         }
         boolWallDrawState[i] = 1;
-        myGlobalCenter[i] = 0.0f;
     }
     playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
                             <<", "<<dimensions[2]<<endl;
@@ -139,32 +136,32 @@ void subRoom::drawRoom() {
     /*for (i=4;i<5;i++) {
         boolWallDrawState[i] = 0;
     }*/
-    for (i=0;i<myDoors->numFakeDoors;i++) {
-        if (!myDoors->fakeDoors[i].texturesGenerated) {
-            // If the door picked a wall that isnt being drawn:
-            while (!boolWallDrawState[myDoors->fakeDoors[i].myWall]) {
-                // This is a shitty way to do this
-                myDoors->fakeDoors[i].myWall = (rand() % 3 + 1); // Pick a new wall
-            }
-            // Generate the texture(s)
-            myDoors->initFakeDoor(i);
-            // Pick where to randomly put the door:
-            if (myDoors->fakeDoors[i].myWall == WALL1 ||
-                myDoors->fakeDoors[i].myWall == WALL2) {
-                myDoors->fakeDoors[i].x = (rand() % (int)(dimensions[1]-1) + 1);
-            }
+    //for (i=0;i<myDoors->numFakeDoors;i++) {
+    //    if (!myDoors->fakeDoors[i].texturesGenerated) {
+    //        // If the door picked a wall that isnt being drawn:
+    //        while (!boolWallDrawState[myDoors->fakeDoors[i].myWall]) {
+    //            // This is a shitty way to do this
+    //            myDoors->fakeDoors[i].myWall = (rand() % 3 + 1); // Pick a new wall
+    //        }
+    //        // Generate the texture(s)
+    //        myDoors->initFakeDoor(i);
+    //        // Pick where to randomly put the door:
+    //        if (myDoors->fakeDoors[i].myWall == WALL1 ||
+    //            myDoors->fakeDoors[i].myWall == WALL2) {
+    //            myDoors->fakeDoors[i].x = (rand() % (int)(dimensions[1]-1) + 1);
+    //        }
 
-            if (myDoors->fakeDoors[i].myWall == WALL3 ||
-                myDoors->fakeDoors[i].myWall == WALL4) {
-                myDoors->fakeDoors[i].x = (rand() % (int)(dimensions[0]-1) + 1);
-            }
-            playerHandle->myLogFile->log<<"There are "<<myDoors->numFakeDoors<<" fake doors in this"
-                                        <<" room."<<endl;
-            playerHandle->myLogFile->log<<"Door "<<i<<" generated at "<<myDoors->fakeDoors[i].x
-                                        <<" on WALL"<<myDoors->fakeDoors[i].myWall<<endl;
-            playerHandle->myLogFile->log<<"    Uses texture "<<myDoors->fakeDoors[i].fDoorTex<<endl;
-        }
-    }
+    //        if (myDoors->fakeDoors[i].myWall == WALL3 ||
+    //            myDoors->fakeDoors[i].myWall == WALL4) {
+    //            myDoors->fakeDoors[i].x = (rand() % (int)(dimensions[0]-1) + 1);
+    //        }
+    //        playerHandle->myLogFile->log<<"There are "<<myDoors->numFakeDoors<<" fake doors in this"
+    //                                    <<" room."<<endl;
+    //        playerHandle->myLogFile->log<<"Door "<<i<<" generated at "<<myDoors->fakeDoors[i].x
+    //                                    <<" on WALL"<<myDoors->fakeDoors[i].myWall<<endl;
+    //        playerHandle->myLogFile->log<<"    Uses texture "<<myDoors->fakeDoors[i].fDoorTex<<endl;
+    //    }
+    //}
 
     // Check to see if we have generated our textures yet:
     if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
@@ -181,7 +178,7 @@ void subRoom::drawRoom() {
     glTranslatef(myGlobalCenter[0], myGlobalCenter[1], myGlobalCenter[2]);
 
     // Draw some fake doors:
-    myDoors->drawDoors(dimensions);
+    //myDoors->drawDoors(dimensions);
     
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
@@ -289,22 +286,23 @@ float *subRoom::GetGlobalCenter() {
 }
 
 void subRoom::SetGlobalCenter(float *newGlobalCenter) {
-    myGlobalCenter = newGlobalCenter;
+    int i;
+    for (i=0;i<3;i++)
+        myGlobalCenter[i] = newGlobalCenter[i];
 }
 
 // DECONSTRUCTORS
 subRoom::~subRoom() {
-    if (myGlobalCenter) {
-        delete [] myGlobalCenter;
-        //myGlobalCenter = 0;
-    }
-    delete myDoors;
+    delete [] myGlobalCenter;
+    //delete [] myDoors;
+    delete [] dimensions;
+    delete [] boolWallDrawState;
+    delete [] roomTextures;
 }
 
 doorContainer::~doorContainer() {
-    delete [] fakeDoors;
-    //fakeDoors = 0;
-    // Comment the below out until we actually use it:
-	//delete [] realDoors;
-    //realDoors = 0;
+    //if (!fakeDoors)
+    //    delete [] fakeDoors;
+    //if (!realDoors)
+    //    delete [] realDoors;
 }

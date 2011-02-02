@@ -245,10 +245,10 @@ static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
             }
             accumulator -= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC));
             // Lets not fall through the floor:
-            float *tempGlobalCent = mainPlayerObj->currentRoom->GetGlobalCenter();
-            if (mainPlayerObj->globPos[1] > (tempGlobalCent[1]+1)) {
-                mainPlayerObj->globPos[1]-=1;
-            }
+            //float *tempGlobalCent = mainPlayerObj->currentRoom->GetGlobalCenter();
+            //if (mainPlayerObj->globPos[1] > (tempGlobalCent[1]+1)) {
+            //    mainPlayerObj->globPos[1]-=1;
+            //}
 			//cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
 
         }
@@ -257,7 +257,7 @@ static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
 }
 
 int main(int argv, char *argc[]) {
-    srand(time(NULL));
+    srand((int)time(NULL));
 
 	// I don't know why, but this fixes everything. Goddamn.
     SDL_Surface *screen = SDL_SetVideoMode(800, 600, 16, SDL_DOUBLEBUF | SDL_HWSURFACE);

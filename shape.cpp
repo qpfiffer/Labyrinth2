@@ -159,7 +159,7 @@ void drawCube(float x, float y, float z) {
     glEnd();
 }
 
-void drawFace() {
+void inline drawFace() {
   glPushMatrix();
   glBegin(GL_TRIANGLES);
     glColor3f(1.0f,1.0f,1.0f);

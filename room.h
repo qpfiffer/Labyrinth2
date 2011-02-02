@@ -52,15 +52,15 @@ public:
 private:
     float *myGlobalCenter; // X, Y, Z offset of the current room
     playerStats *playerHandle;
-    doorContainer *myDoors;
+    //doorContainer *myDoors;
     // Lets do doors later. First we do rooms.
     // X, Y, Z
-    float dimensions[3];
+    float *dimensions;
     // This specifies if we should avoid drawing a wall:
-    int boolWallDrawState[6];
+    int *boolWallDrawState;
     // Holds handles to textures that the room uses.
     // (floor, wall and ceiling)
-    GLuint roomTextures[3];
+    GLuint *roomTextures;
 };
 
 class overRoom {
