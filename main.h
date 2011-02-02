@@ -35,6 +35,6 @@ public:
 
 string itos(int convMe);
 int initIO(SDL_Surface *screen, playerStats *mainPlayerObj); // Sound, video, keyboard, mouse, etc.
-static void draw(SDL_Surface *screen, playerStats *mainPlayerObj);
-static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj);
+static void draw (SDL_Surface *screen, playerStats *mainPlayerObj);
+static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj);
 #endif

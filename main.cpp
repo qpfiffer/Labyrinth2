@@ -42,7 +42,7 @@ int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
     return 0;
 }
 
-static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {   
+static void draw (SDL_Surface *screen, playerStats *mainPlayerObj) {   
 	if (mainPlayerObj->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
@@ -125,7 +125,7 @@ static void draw(SDL_Surface *screen, playerStats *mainPlayerObj) {
     }
 }
 
-static void mainLoop(SDL_Surface *screen, playerStats *mainPlayerObj) {
+static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
     SDL_Event event;
     float frnt_back=0, lft_rht=0; // Flags for movement
     float xrotrad=0.0f, yrotrad=0.0f; // For movement
