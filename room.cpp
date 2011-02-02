@@ -13,7 +13,7 @@ doorContainer::doorContainer() {
     numRealDoors = 0; // to be implimented later
     numFakeDoors = (rand() % 4 + 1); 
     fakeDoors = new door[numFakeDoors];
-    int i;
+	int i;
     for(i=0;i<numFakeDoors;i++) {
         fakeDoors[i].x = 0;
         fakeDoors[i].texturesGenerated = false;
@@ -32,7 +32,8 @@ doorContainer::doorContainer() {
 // SUB-ROOM CONSTRUCTORS
 subRoom::subRoom() {
     myGlobalCenter = new float[3];
-    int i;
+    myDoors = 0;
+	int i;
     for (i=0;i<6;i++) {
         if (i<3) {
             roomTextures[i] = 0;
@@ -45,7 +46,8 @@ subRoom::subRoom() {
 
 subRoom::subRoom(playerStats *playerPassed) {
     playerHandle = playerPassed; // Store the player handle
-    myGlobalCenter = new float[3];
+    //if (!myGlobalCenter)
+		myGlobalCenter = new float[3];
     myDoors = new doorContainer;
     int i;
     for (i=0;i<6;i++) {
@@ -292,16 +294,17 @@ void subRoom::SetGlobalCenter(float *newGlobalCenter) {
 
 // DECONSTRUCTORS
 subRoom::~subRoom() {
-    /*if (myGlobalCenter) {
+    if (myGlobalCenter) {
         delete [] myGlobalCenter;
-        myGlobalCenter = 0;
-    }*/
-    //delete myDoors;
+        //myGlobalCenter = 0;
+    }
+    delete myDoors;
 }
 
 doorContainer::~doorContainer() {
-    /*delete [] fakeDoors;
-    fakeDoors = 0;
-    delete [] realDoors;
-    realDoors = 0;*/
+    delete [] fakeDoors;
+    //fakeDoors = 0;
+    // Comment the below out until we actually use it:
+	//delete [] realDoors;
+    //realDoors = 0;
 }
