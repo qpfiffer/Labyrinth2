@@ -9,52 +9,62 @@
 #endif
 
 //CONSTRUCTORS
-configInfo::configInfo(): width(800), height(600),
-    fullscreen(0),
-    vsync(0),
-    fps(60),
-    currentDrawMode(0),
-    mouse_sense(1.0f)  {
+configInfo::configInfo(): 
+	currentDrawMode(0), config(new ifstream), width(800), height(600),
+    fullscreen(0), vsync(0), fps(60), mouse_sense(1.0f) {
 }
 
-logFile::logFile() {   
+configInfo::~configInfo() {
+	delete config;
+}
+
+logFile::logFile() {
+	log.open("lab2.log", ifstream::out);
+	if (log.good())
+		Log("--- LOG START ---\n");
+}
+
+logFile::~logFile() {
+	if (log.good())
+        log.close();
+	//delete log;
 }
 //PUBLIC METHODS
 
 // CONFIG FILE
 int configInfo::readConfig() {
-    config.open("config.txt", ifstream::in);
+    config->open("config.txt", ifstream::in);
     char temp[25];
-    while (config.good()) { // EOF, badbit and failbit
+    while (config->good()) { // EOF, badbit and failbit
         // cout << (char) config.get();
-        config.getline(temp, 24, '=');
+        config->getline(temp, 24, '=');
         //cout<<temp<<"\n";
         if (strcmp(temp, "width") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             width=atoi(temp);
         }
         if (strcmp(temp, "height") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             height=atoi(temp);
         }
         if (strcmp(temp, "fullscreen") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             fullscreen=atoi(temp);
         }
         if (strcmp(temp, "vsync") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             vsync=atoi(temp);
         }
         if (strcmp(temp, "fps") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             fps=atoi(temp);
         }
         if (strcmp(temp, "mouse_sense") == 0) {
-            config.getline(temp, 10, '\n');
+            config->getline(temp, 10, '\n');
             mouse_sense=atof(temp);
         }
     }
-    config.close();
+    config->close();
 
     return 0;
 }
@@ -65,30 +75,18 @@ void configInfo::printVars() {
 }
 
 // LOG FILE
-int logFile::readLogFile() {
-    log.open("lab2.log", ifstream::out);
-    return 0;
-}
-
-/*
-void logFile::Log(string text) {
-    while (log.good()) { // EOF, badbit and failbit
+void logFile::Log(std::string text) {
+    if (log.good()) { // EOF, badbit and failbit
         log<<text<<endl;
     }
 }
-void logFile::Warning(string text) {
-    while (log.good()) { // EOF, badbit and failbit
+void logFile::Warning(std::string text) {
+    if (log.good()) { // EOF, badbit and failbit
         log<<"WARNING: "<<text<<endl;
     }
 }
-void logFile::Error(string text) {
-    while (log.good()) { // EOF, badbit and failbit
+void logFile::Error(std::string text) {
+   	if (log.good()) { // EOF, badbit and failbit
         log<<"ERROR: "<<text<<endl;
     }
-}*/
-
-int logFile::closeLogfile() {
-    if (log.good())
-        log.close();
-    return 0;
 }

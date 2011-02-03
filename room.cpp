@@ -67,10 +67,12 @@ subRoom::subRoom(logFile *mLogFile):
         }
         boolWallDrawState[i] = 1;
     }
-    mLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
+	std::stringstream temp;
+	temp<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
                             <<", "<<dimensions[2]<<std::endl;
-    mLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
+	temp<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
                             <<", "<<roomTextures[2]<<std::endl;
+	mLogFile->Log(temp.str());
 }
 
 // DECONSTRUCTORS

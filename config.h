@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -16,14 +17,15 @@ using namespace std;
 class configInfo {
 public:
     configInfo();      // Constructor (duh)
-    
+    ~configInfo();
+
     int readConfig();  // Reads configuration file
     void printVars();  // Prints out vars for debuggings
 
     // "Get" functions:
     // DrawMode is an int because I hate dealing with extern.
-    int getCurrentDrawMode() { return currentDrawMode; }
     int getCurrentFPS() { return fps; }
+    int getCurrentDrawMode() { return currentDrawMode; }
     float getMouseSense() { return mouse_sense; }
     int getWidth() { return width; }
     int getHeight() { return height; }
@@ -34,7 +36,7 @@ public:
     void setCurrentDrawMode(int type) { currentDrawMode=type; }
 private:
     int currentDrawMode;
-    ifstream config;   // Config file fstream handler
+    ifstream *config;   // Config file fstream handler
     int width, height; // Screen width and height
     int fullscreen;
     int vsync;
@@ -45,10 +47,13 @@ private:
 class logFile {
 public:
     logFile();
+	~logFile();
 
-    int readLogFile();
-    int closeLogfile();
+    void Log(std::string text);
+    void Warning(std::string text);
+    void Error(std::string text);
 
+private:
     ofstream log;
 };
 #endif
