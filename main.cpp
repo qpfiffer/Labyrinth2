@@ -1,22 +1,32 @@
 #include "main.h"
+#include "shape.h"
+#include "config.h"
+#include "world.h"
+#include "room.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327
 #endif
 
-string itos(int convMe) {
-    string converted;
-    stringstream out;
-    out<<convMe;
-    converted = out.str();
-    return converted;
-}
-// Constructors:
-playerStats::playerStats() {
-    // Log file should be made first so other classes can use it
-    myLogFile = new logFile;
-    myLogFile->readLogFile();
+// VC2k10 memory leak checking
+#ifdef _DEBUG
+#include <ostream>
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
+//string itos(int convMe) {
+//    string converted;
+//    stringstream out;
+//    out<<convMe;
+//    converted = out.str();
+//    return converted;
+//}
+// Constructors:
+Player::Player(): globRot(new float[3]),
+    globPos(new float[3]), moveSpeed(1.0f){
     int i;
     for (i=0; i<3; i++) {
         globRot[i]=0;
@@ -26,24 +36,108 @@ playerStats::playerStats() {
             globPos[i]=0;
         }
     }
-    moveSpeed = 0.1f;         // The camera's movement speed
-
-    currentRoom = new subRoom(this);
 }
 
-int initIO(SDL_Surface *screen, playerStats *mainPlayerObj) {
+Player::~Player() {
+    delete []globRot;
+    delete []globPos;
+}
+
+Game::Game(): mInfo(new configInfo), mLogFile(new logFile), 
+    mPlayer(new Player), currentRoom(new subRoom(mLogFile)) {
+}
+
+Game::~Game() {
+    delete mInfo;
+    delete mLogFile;
+    delete mPlayer;
+    delete currentRoom;
+}
+
+int Game::initIO(SDL_Surface *screen) {
     // Read in data from config file:
-    mainPlayerObj->readConfig();
-    if (mainPlayerObj->setupVideo(screen) == 1)
+    mInfo->readConfig();
+    if (setupVideo(screen) == 1)
         return 1;
 
-    mainPlayerObj->printVars();
+    mInfo->printVars();
     // Keyboard/mouse:
     return 0;
 }
 
-static void draw (SDL_Surface *screen, playerStats *mainPlayerObj) {   
-	if (mainPlayerObj->getCurrentDrawMode() == game) {
+int Game::setupVideo(SDL_Surface *screen) {
+    // Setting up video:
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        printf("Unable to init video: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    const SDL_VideoInfo *vidInfo = SDL_GetVideoInfo();
+    if (mInfo->getFullscreen() == 1 && mInfo->getCurrentDrawMode() == game) {
+		//cout<<"Called on 1"<<endl;
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        screen = SDL_SetVideoMode(mInfo->getWidth(), mInfo->getHeight(), 16, SDL_OPENGL | SDL_FULLSCREEN);
+	}
+    else if (mInfo->getFullscreen() == 0 && mInfo->getCurrentDrawMode() == game) {
+		//cout<<"Called on 2"<<endl;
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        screen = SDL_SetVideoMode(mInfo->getWidth(), mInfo->getHeight(), 16, SDL_OPENGL);
+	}
+	else if (mInfo->getCurrentDrawMode() == menu) {
+		//cout<<"Called on 3"<<endl;
+		screen = SDL_SetVideoMode(mInfo->getWidth(), mInfo->getHeight(), 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	}
+	if (screen == NULL)
+		cout<<"Unable to setup SDL_Surface."<<endl;
+
+    vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
+	//cout<<"From SDL_Surface pointer: Width: "<<screen->w<<" Height: "<<screen->h<<endl;
+	//cout<<"From VideoInfo: Screen w: "<<(int)vidInfo->current_w<<" Screen h: "<<(int)vidInfo->current_h<<endl;
+    if (mInfo->getCurrentDrawMode() == game) {
+        // OpenGL init:
+        glEnable(GL_TEXTURE_2D); // Enable 2D textures
+        glShadeModel(GL_SMOOTH);
+        glViewport(0, 0, vidInfo->current_w, vidInfo->current_h);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glMatrixMode(GL_PROJECTION); // Load the Porjection matrix (camera stuff, basically)
+        glLoadIdentity(); // Reset that matrix
+        float aspect = (float)vidInfo->current_w / (float)vidInfo->current_h; // The aspect ratio
+        gluPerspective(50.0, aspect, 0.1, 100.0); //
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+        glMatrixMode(GL_MODELVIEW); // Switch back to the good 'ole modelview matrix
+        glEnable(GL_DEPTH_TEST); //Not sure why we want this enabled
+        glDepthFunc(GL_LEQUAL);  // This has to to with the above
+        glDisable(GL_CULL_FACE); //Draw front AND back of polygons
+
+        // AA
+        /*GLfloat values[2];
+        glGetFloatv (GL_LINE_WIDTH_GRANULARITY, values);
+        glGetFloatv (GL_LINE_WIDTH_RANGE, values);
+        glEnable (GL_POLYGON_SMOOTH);
+        glEnable (GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glHint (GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+        glLineWidth (1.5); */
+        // End AA
+
+        glLoadIdentity(); // Blank GL_MODELVIEW
+	    SDL_ShowCursor(SDL_DISABLE); // Hide the mouse cursor
+    	SDL_WM_GrabInput(SDL_GRAB_ON); //Makes it so mouse events happen outside of the screen.
+        SDL_WM_SetCaption("Labyrinth THREE","Labyrinth THREE");
+        // ---
+    }
+    return 0;
+
+}
+
+void Game::drawCurrentRoom() {
+    currentRoom->drawRoom();
+}
+
+void Game::draw (SDL_Surface *screen) {   
+	if (mInfo->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
         glClearColor(0,0,0,0); // Set the default fill to yellow
@@ -58,15 +152,14 @@ static void draw (SDL_Surface *screen, playerStats *mainPlayerObj) {
           mainPlayerObj->globRot[1] < 360)
             break;
             }*/
-        glRotatef(mainPlayerObj->globRot[0], 1, 0, 0);
-        glRotatef(mainPlayerObj->globRot[1], 0, 1, 0);
+        glRotatef(mPlayer->getXRot(), 1, 0, 0);
+        glRotatef(mPlayer->getYRot(), 0, 1, 0);
         // Global movement:
-        glTranslatef(mainPlayerObj->globPos[0], mainPlayerObj->globPos[1], mainPlayerObj->globPos[2]);
+        glTranslatef(mPlayer->getXRot(), mPlayer->getYRot(), mPlayer->getZRot());
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // Draw the current room:
-        mainPlayerObj->currentRoom->drawRoom();
-
-		
+        //mPlayer->currentRoom->drawRoom();
+        drawCurrentRoom();
 
         SDL_GL_SwapBuffers();
     } else {
@@ -125,8 +218,9 @@ static void draw (SDL_Surface *screen, playerStats *mainPlayerObj) {
     }
 }
 
-static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
+void Game::mainLoop (SDL_Surface *screen) {
     SDL_Event event;
+    bool QUIT_FLAG = false;
     float frnt_back=0, lft_rht=0; // Flags for movement
     float xrotrad=0.0f, yrotrad=0.0f; // For movement
     // For fixing the timestep:
@@ -141,34 +235,31 @@ static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
         deltaTime = newTime - currentTime; // Get how much time has passed
         accumulator += deltaTime;
         //cout<<"Accum: "<<accumulator<<endl;
-        if (accumulator >= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC))) {
+        if (accumulator >= (1/(mInfo->getCurrentFPS()*CLOCKS_PER_SEC))) {
             while(SDL_PollEvent(&event)) { // Keep going until there are no more pending events
                 switch (event.type) {
                 case SDL_KEYDOWN:
                     // Coolest union of structures ever. Holds every event EVER.
                     switch (event.key.keysym.sym) { 
                     case SDLK_ESCAPE:
-                        mainPlayerObj->myLogFile->closeLogfile();
-                        delete mainPlayerObj->currentRoom;
-                        delete mainPlayerObj->myLogFile;
-                        exit(0);
+                        QUIT_FLAG = true;
                         break; // Redundant, but whatever.
                     case SDLK_w:
                         // Flag the forward key as pressed, repeat as necesssary
-                        frnt_back = mainPlayerObj->moveSpeed; 
+                        frnt_back = mPlayer->getMoveSpeed(); 
                         break;
                     case SDLK_s:
-                        frnt_back = -(mainPlayerObj->moveSpeed);
+                        frnt_back = -(mPlayer->getMoveSpeed());
                         break;
                     case SDLK_a:
-                        lft_rht = mainPlayerObj->moveSpeed;
+                        lft_rht = mPlayer->getMoveSpeed();
                         break;
                     case SDLK_d:
-                        lft_rht = -(mainPlayerObj->moveSpeed);
+                        lft_rht = -(mPlayer->getMoveSpeed());
                         break;
                     default:
                         // If it is a key we dont have an action for, just:
-						cout<<"GOT A  RANDOM KEY: "<<event.key.keysym.sym<<endl;
+						//cout<<"GOT A  RANDOM KEY: "<<event.key.keysym.sym<<endl;
                         break;
                     }
                     break; //Gets out of KEYDOWN?
@@ -203,65 +294,89 @@ static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj) {
                     // Rotate the camera
                     //cout<<"Xrel: "<<event.motion.xrel<<" Yrel: "<<event.motion.yrel<<endl;
                     if (event.motion.xrel < 100 && event.motion.yrel < 100) {
-						if (mainPlayerObj->globRot[0] + (event.motion.yrel/mainPlayerObj->GetMouseSense()) > -90 && 
-							mainPlayerObj->globRot[0] + (event.motion.yrel/mainPlayerObj->GetMouseSense()) < 90)
-							mainPlayerObj->globRot[0] += (event.motion.yrel/mainPlayerObj->GetMouseSense());
-                        mainPlayerObj->globRot[1]+=(event.motion.xrel/mainPlayerObj->GetMouseSense());
+                        // Make sure we can't look in circles (exorcist neck breaking style):
+						if (mPlayer->getXRot() + (event.motion.yrel/mInfo->getMouseSense()) > -90 && 
+							mPlayer->getXRot() + (event.motion.yrel/mInfo->getMouseSense()) < 90) {
+							mPlayer->setXRot(mPlayer->getXRot()+(event.motion.yrel/mInfo->getMouseSense()));
+                        }
+
+                        float newRot = mPlayer->getXRot() + (event.motion.xrel/mInfo->getMouseSense());
+                        mPlayer->setYRot(newRot);
                     }
                     break;
                 case SDL_QUIT:
-                    exit(0);
+                    QUIT_FLAG = true;
                     break;
                 }
             }
+            
+            float newVal = 0.0f;
             // Debug showing movement flag values:
-            if (frnt_back == mainPlayerObj->moveSpeed) {
+            if (frnt_back == mPlayer->getMoveSpeed()) {
                 // If it is w:
-                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
-                xrotrad = (float)(mainPlayerObj->globRot[0] / 180 * M_PI);
-                mainPlayerObj->globPos[0] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[1] += float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
+                yrotrad = (float)(mPlayer->getYRot() / 180 * M_PI);
+                xrotrad = (float)(mPlayer->getXRot() / 180 * M_PI);
+                newVal = mPlayer->getXPos() - float(sin(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setXPos(newVal);
+                newVal = mPlayer->getZPos() + float(cos(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setZPos(newVal);
+                newVal = mPlayer->getYPos() + float(sin(xrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setYPos(newVal);
             }
-			if (frnt_back == -mainPlayerObj->moveSpeed) {
+			if (frnt_back == -mPlayer->getMoveSpeed()) {
                 // If it is s:
-                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
-                xrotrad = (float)(mainPlayerObj->globRot[0] / 180 * M_PI);
-                mainPlayerObj->globPos[0] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[1] -= float(sin(xrotrad)) * mainPlayerObj->moveSpeed;
+                yrotrad = (float)(mPlayer->getYRot() / 180 * M_PI);
+                xrotrad = (float)(mPlayer->getXRot() / 180 * M_PI);
+                newVal = mPlayer->getXPos() + float(sin(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setXPos(newVal);
+                newVal = mPlayer->getZPos() - float(cos(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setZPos(newVal);
+                newVal = mPlayer->getYPos() - float(sin(xrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setYPos(newVal);
             }
-            if (lft_rht == mainPlayerObj->moveSpeed) {
+            if (lft_rht == mPlayer->getMoveSpeed()) {
                 // If it is a:
-                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
-                mainPlayerObj->globPos[0] += float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] += float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
+                yrotrad = (float)(mPlayer->getYRot() / 180 * M_PI);
+                newVal = mPlayer->getXPos() + float(cos(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setXPos(newVal);
+                newVal = mPlayer->getZPos() + float(sin(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setZPos(newVal);
             }
-			if (lft_rht == -mainPlayerObj->moveSpeed) {
+			if (lft_rht == -mPlayer->getMoveSpeed()) {
                 // If it is d:
-                yrotrad = (float)(mainPlayerObj->globRot[1] / 180 * M_PI);
-                mainPlayerObj->globPos[0] -= float(cos(yrotrad)) * mainPlayerObj->moveSpeed;
-                mainPlayerObj->globPos[2] -= float(sin(yrotrad)) * mainPlayerObj->moveSpeed;
+                yrotrad = (float)(mPlayer->getYRot() / 180 * M_PI);
+                newVal = mPlayer->getXPos() - float(cos(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setXPos(newVal);
+                newVal = mPlayer->getZPos() - float(sin(yrotrad)) * mPlayer->getMoveSpeed();
+                mPlayer->setZPos(newVal);
             }
-            accumulator -= (1/(mainPlayerObj->getCurrentFPS()*CLOCKS_PER_SEC));
+            accumulator -= (1/(mInfo->getCurrentFPS()*CLOCKS_PER_SEC));
             // Lets not fall through the floor:
             //float *tempGlobalCent = mainPlayerObj->currentRoom->GetGlobalCenter();
             //if (mainPlayerObj->globPos[1] > (tempGlobalCent[1]+1)) {
             //    mainPlayerObj->globPos[1]-=1;
             //}
 			//cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
-
         }
-        draw(screen, mainPlayerObj); // Updates the screen
+        if (QUIT_FLAG)
+            break; // Break out and get rid of memory leaks and stuff
+        // Else
+        draw(screen); // Updates the screen
+
     }
+}
+
+void Game::setCurrentDrawMode(videoDrawMode type) {
+    mInfo->setCurrentDrawMode((int)type);
 }
 
 int main(int argv, char *argc[]) {
     srand((int)time(NULL));
+    Game *mGame = new Game;
 
-	// I don't know why, but this fixes everything. Goddamn.
+	// Default screen init:
     SDL_Surface *screen = SDL_SetVideoMode(800, 600, 16, SDL_DOUBLEBUF | SDL_HWSURFACE);
-    playerStats mainPlayerObj;
+    //playerStats *mainPlayerObj = new playerStats;
     
     // For temporary debugging:
 	int menuDisplay;
@@ -270,13 +385,17 @@ int main(int argv, char *argc[]) {
     else
 		menuDisplay = atoi(argc[1]);
     if (menuDisplay == 1)
-        mainPlayerObj.changeCurrentDrawMode(menu);
+        mGame->setCurrentDrawMode(menu);
     else
-        mainPlayerObj.changeCurrentDrawMode(game);
+        mGame->setCurrentDrawMode(game);
 
-    if (initIO(screen, &mainPlayerObj) == 1) // Kbd, mouse, video, sound, etc.
+    if (mGame->initIO(screen) == 1) {// Kbd, mouse, video, sound, etc.
+        //delete mainPlayerObj;
         return 1;
-    mainLoop(screen, &mainPlayerObj);
+    }
+    mGame->mainLoop(screen);
+    SDL_Quit();
+    delete mGame;
 
     return 0;
 }

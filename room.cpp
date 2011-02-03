@@ -1,3 +1,7 @@
+#include "main.h"
+#include "shape.h"
+#include "config.h"
+#include "world.h"
 #include "room.h"
 #define FLOOR 0
 #define WALL1 1 // -x, +z
@@ -5,6 +9,15 @@
 #define WALL3 3 // +x, -z
 #define WALL4 4 // -x, -z
 #define CEILING 5
+
+// VC2k10 memory leak checking
+#ifdef _DEBUG
+#include <ostream>
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 // CONSTRUCTORS:
 // ---------------------------
@@ -18,11 +31,10 @@ doorContainer::doorContainer():
         fakeDoors[i].texturesGenerated = false;
         fakeDoors[i].myWall = (rand() % 4 +1); // Pick a random wall
         
-        string temp = "./textures/door_";
-        temp+=itos((rand() % 4 + 1));
-        temp+=".png";
+        std::stringstream temp;
+        temp<<"./textures/door_"<<(rand() % 4 + 1)<<".png";
         //printf("String is: %s\n", temp);
-        fakeDoors[i].fDoorTex = temp;
+        fakeDoors[i].fDoorTex = temp.str();
         // Make sure the texture handle is null:
         fakeDoors[i].fDoorTexHandle[0] = 0;
     }
@@ -30,7 +42,7 @@ doorContainer::doorContainer():
 
 // SUB-ROOM CONSTRUCTORS
 subRoom::subRoom(): 
-        myGlobalCenter(new float[3]), playerHandle(0), //myDoors(new doorContainer),
+        myGlobalCenter(new float[3]), //myDoors(new doorContainer),
         dimensions(new float[3]), boolWallDrawState(new int[6]), roomTextures(new GLuint[3]) {
 	int i;
     for (i=0;i<6;i++) {
@@ -43,8 +55,8 @@ subRoom::subRoom():
     }
 }
 
-subRoom::subRoom(playerStats *playerPassed): 
-        myGlobalCenter(new float[3]), playerHandle(playerPassed), //myDoors(new doorContainer),
+subRoom::subRoom(logFile *mLogFile): 
+        myGlobalCenter(new float[3]), //myDoors(new doorContainer),
         dimensions(new float[3]), boolWallDrawState(new int[6]), roomTextures(new GLuint[3]) {
     int i;
     for (i=0;i<6;i++) {
@@ -55,10 +67,26 @@ subRoom::subRoom(playerStats *playerPassed):
         }
         boolWallDrawState[i] = 1;
     }
-    playerPassed->myLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
-                            <<", "<<dimensions[2]<<endl;
-    playerPassed->myLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
-                            <<", "<<roomTextures[2]<<endl;
+    mLogFile->log<<"Room dimensions: "<<dimensions[0]<<", "<<dimensions[1]
+                            <<", "<<dimensions[2]<<std::endl;
+    mLogFile->log<<"Room texture values:"<<roomTextures[0]<<", "<<roomTextures[1]
+                            <<", "<<roomTextures[2]<<std::endl;
+}
+
+// DECONSTRUCTORS
+subRoom::~subRoom() {
+    delete [] myGlobalCenter;
+    //delete [] myDoors;
+    delete [] dimensions;
+    delete [] boolWallDrawState;
+    delete [] roomTextures;
+}
+
+doorContainer::~doorContainer() {
+    //if (!fakeDoors)
+    //    delete [] fakeDoors;
+    //if (!realDoors)
+    //    delete [] realDoors;
 }
 
 overRoom::overRoom() {
@@ -129,7 +157,7 @@ void subRoom::drawRoom() {
     // COMPLEX ROOM DRAWING FUNCTION GOES HERE
     
     // Manage our doors, make sure they're setup
-    int i;
+    //int i;
     // DEBUG:
     //boolWallDrawState[1] = 0;
     //boolWallDrawState[2] = 0;
@@ -289,20 +317,4 @@ void subRoom::SetGlobalCenter(float *newGlobalCenter) {
     int i;
     for (i=0;i<3;i++)
         myGlobalCenter[i] = newGlobalCenter[i];
-}
-
-// DECONSTRUCTORS
-subRoom::~subRoom() {
-    delete [] myGlobalCenter;
-    //delete [] myDoors;
-    delete [] dimensions;
-    delete [] boolWallDrawState;
-    delete [] roomTextures;
-}
-
-doorContainer::~doorContainer() {
-    //if (!fakeDoors)
-    //    delete [] fakeDoors;
-    //if (!realDoors)
-    //    delete [] realDoors;
 }

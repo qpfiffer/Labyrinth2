@@ -1,16 +1,20 @@
 #ifndef _ROOM_H
 #define _ROOM_H
-#include "main.h"
+#include <string>
+#include <sstream>
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "SDL_image.h"
 
 // Wu-tang clan ain't nothin t'fuck with
-class playerStats;
+class logFile;
 
 struct door {
     int x;
     int y;
     int myWall;
     // Fake doors:
-    string fDoorTex;
+    std::string fDoorTex;
     GLuint fDoorTexHandle[1];
     bool texturesGenerated;
     // Real doors:
@@ -38,7 +42,7 @@ public:
 class subRoom {
 public:
     subRoom();
-    subRoom(playerStats *playerPassed);
+    subRoom(logFile *mLogFile);
     ~subRoom();
 
     void createChildRoom();
@@ -51,7 +55,6 @@ public:
     void SetGlobalCenter(float *newGlobalCenter); // Is an array better?
 private:
     float *myGlobalCenter; // X, Y, Z offset of the current room
-    playerStats *playerHandle;
     //doorContainer *myDoors;
     // Lets do doors later. First we do rooms.
     // X, Y, Z

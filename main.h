@@ -1,8 +1,8 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_image.h>
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "SDL_image.h"
 
 #include <iostream>
 #include <vector>
@@ -15,26 +15,59 @@
 #include <cmath>
 #include <ctime>
 
-#include "shape.h"
-#include "config.h"
-#include "world.h"
-#include "room.h"
-using namespace std;
-
+enum videoDrawMode { menu, game };
+class configInfo;
 class subRoom;
-class playerStats: public configInfo {
-public:
-    playerStats();
-    float globRot[3]; // The camera's rotation at all times
-    float globPos[3]; // The camera's position at all times
-    float moveSpeed;  // The camera's movement speed
+class logFile;
 
-    subRoom *currentRoom;
-    logFile *myLogFile;
+class Player {
+public:
+    Player();
+    ~Player();
+
+    float inline getMoveSpeed() { return moveSpeed; }
+    // Rotation stuff:
+    float inline getXRot() { return globRot[0]; }
+    float inline getYRot() { return globRot[1]; }
+    float inline getZRot() { return globRot[2]; }
+
+    void inline setXRot(float newRot) { globRot[0] = newRot; };
+    void inline setYRot(float newRot) { globRot[1] = newRot; };
+    void inline setZRot(float newRot) { globRot[2] = newRot; };
+    // Position stuff:
+    float inline getXPos() { return globPos[0]; }
+    float inline getYPos() { return globPos[1]; }
+    float inline getZPos() { return globPos[2]; }
+
+    void inline setXPos(float newPos) { globPos[0] = newPos; };
+    void inline setYPos(float newPos) { globPos[1] = newPos; };
+    void inline setZPos(float newPos) { globPos[2] = newPos; };
+
+private:
+    float *globRot; // The camera's rotation at all times
+    float *globPos; // The camera's position at all times
+    float moveSpeed;  // The camera's movement speed
 };
 
-string itos(int convMe);
-int initIO(SDL_Surface *screen, playerStats *mainPlayerObj); // Sound, video, keyboard, mouse, etc.
-static void draw (SDL_Surface *screen, playerStats *mainPlayerObj);
-static void mainLoop (SDL_Surface *screen, playerStats *mainPlayerObj);
+class Game {
+public:
+    Game();
+    ~Game();
+
+    void setCurrentDrawMode(videoDrawMode type);
+    
+    void draw (SDL_Surface *screen);
+    void drawCurrentRoom();
+    void mainLoop (SDL_Surface *screen);
+
+    int initIO(SDL_Surface *screen);
+    int setupVideo(SDL_Surface *screen);  // Communicates settings to SDL
+private:
+    configInfo *mInfo;
+    logFile *mLogFile;
+    Player *mPlayer;
+    subRoom *currentRoom;
+};
+
+//string itos(int convMe);
 #endif
