@@ -155,7 +155,7 @@ void Game::draw (SDL_Surface *screen) {
         glRotatef(mPlayer->getXRot(), 1, 0, 0);
         glRotatef(mPlayer->getYRot(), 0, 1, 0);
         // Global movement:
-        glTranslatef(mPlayer->getXRot(), mPlayer->getYRot(), mPlayer->getZRot());
+        glTranslatef(mPlayer->getXPos(), mPlayer->getYPos(), mPlayer->getZPos());
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // Draw the current room:
         //mPlayer->currentRoom->drawRoom();
@@ -300,7 +300,7 @@ void Game::mainLoop (SDL_Surface *screen) {
 							mPlayer->setXRot(mPlayer->getXRot()+(event.motion.yrel/mInfo->getMouseSense()));
                         }
 
-                        float newRot = mPlayer->getXRot() + (event.motion.xrel/mInfo->getMouseSense());
+                        float newRot = mPlayer->getYRot() + (event.motion.xrel/mInfo->getMouseSense());
                         mPlayer->setYRot(newRot);
                     }
                     break;
