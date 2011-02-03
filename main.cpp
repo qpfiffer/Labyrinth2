@@ -26,7 +26,7 @@
 //}
 // Constructors:
 Player::Player(): globRot(new float[3]),
-    globPos(new float[3]), moveSpeed(1.0f){
+    globPos(new float[3]), moveSpeed(0.05f){
     int i;
     for (i=0; i<3; i++) {
         globRot[i]=0;
