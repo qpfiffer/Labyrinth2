@@ -60,7 +60,7 @@ int Game::initIO(SDL_Surface *screen) {
     if (setupVideo(screen) == 1)
         return 1;
 
-    mInfo->printVars();
+    mLogFile->Log(mInfo->getStrVars());
     // Keyboard/mouse:
     return 0;
 }
@@ -90,9 +90,13 @@ int Game::setupVideo(SDL_Surface *screen) {
 	if (screen == NULL)
 		cout<<"Unable to setup SDL_Surface."<<endl;
 
+    std::stringstream tempSS;
     vidInfo = SDL_GetVideoInfo(); // Call it again because we changed current_w and current_h
-	//cout<<"From SDL_Surface pointer: Width: "<<screen->w<<" Height: "<<screen->h<<endl;
-	//cout<<"From VideoInfo: Screen w: "<<(int)vidInfo->current_w<<" Screen h: "<<(int)vidInfo->current_h<<endl;
+	tempSS<<"From SDL_Surface pointer: Width: "<<screen->w<<" Height: "<<screen->h<<endl;
+	tempSS<<"From VideoInfo: Screen w: "<<(int)vidInfo->current_w
+		  <<" Screen h: "<<(int)vidInfo->current_h<<endl;
+	mLogFile->Log(tempSS.str());
+	
     if (mInfo->getCurrentDrawMode() == game) {
         // OpenGL init:
         glEnable(GL_TEXTURE_2D); // Enable 2D textures

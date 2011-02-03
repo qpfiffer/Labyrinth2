@@ -69,9 +69,11 @@ int configInfo::readConfig() {
     return 0;
 }
 
-void configInfo::printVars() {
-    cout<<"Width: "<<width<<" Height: "<<height<<" Fullscreen: "<<fullscreen<<endl;
-    cout<<"Vsync: "<<vsync<<" Desired FPS: "<<fps<<endl;
+std::string configInfo::getStrVars() {
+    std::stringstream temp;
+	temp<<"Width: "<<width<<" Height: "<<height<<" Fullscreen: "<<fullscreen<<std::endl;
+    temp<<"Vsync: "<<vsync<<" Desired FPS: "<<fps<<std::endl;
+	return temp.str();
 }
 
 // LOG FILE

@@ -20,7 +20,7 @@ public:
     ~configInfo();
 
     int readConfig();  // Reads configuration file
-    void printVars();  // Prints out vars for debuggings
+    std::string getStrVars();  // Prints out vars for debuggings
 
     // "Get" functions:
     // DrawMode is an int because I hate dealing with extern.
