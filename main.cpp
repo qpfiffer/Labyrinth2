@@ -144,10 +144,12 @@ void Game::draw (SDL_Surface *screen) {
 	if (mInfo->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
-        glClearColor(0,0,0,0); // Set the default fill to yellow
-        // Mouse rotation stuff:
+        glClearColor(1.0f,1.0f,1.0f,1.0f); // Set the default fill to yellow
+        glColor3f(1.0f, 1.0f, 1.0f); // Make sure our color is set to white
+		// Mouse rotation stuff:
         // This little loop breaks everything after a little while. I wouldn't enable it.
-        /*while (1) {
+        // NEW NOTE: Consider using modulo here, if it becomes a problem.
+		/*while (1) {
           if (mainPlayerObj->globRot[0] > 360)
             mainPlayerObj->globRot[0]-=360;
           if (mainPlayerObj->globRot[1] > 360)
@@ -162,9 +164,11 @@ void Game::draw (SDL_Surface *screen) {
         glTranslatef(mPlayer->getXPos(), mPlayer->getYPos(), mPlayer->getZPos());
         //cout<<"globRot[0]="<<mainPlayerObj->globRot[0]<<", globRot[1]="<<mainPlayerObj->globRot[1]<<endl;
         // Draw the current room:
-        //mPlayer->currentRoom->drawRoom();
-        drawCurrentRoom();
+		drawCurrentRoom();
 
+		Graphics tempG;
+		tempG.drawFace();
+	
         SDL_GL_SwapBuffers();
     } else {
         // Render a PNG. Temporary.

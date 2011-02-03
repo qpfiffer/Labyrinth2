@@ -1,6 +1,6 @@
 #include "shape.h"
 
-int getTextureHandle(const char *name, GLuint *texture) {
+int Graphics::getTextureHandle(const char *name, GLuint *texture) {
     // Help for this section credited to GPwiki		
     SDL_Surface *surface;
     GLenum texture_format;
@@ -44,7 +44,7 @@ int getTextureHandle(const char *name, GLuint *texture) {
     return 0;
 }
 
-void drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty) {
+void Graphics::drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty) {
     if (x<1)
         x=1;
     if (y<1)
@@ -67,7 +67,7 @@ void drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeat
     glEnd();
 }
 
-void drawVertPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty) {
+void Graphics::drawVertPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty) {
     if (x<1)
         x=1;
     if (y<1)
@@ -91,7 +91,7 @@ void drawVertPlaneTex(float x, float y, GLuint *texture, float repeatx, float re
     glEnd();
 }
 
-void drawPlane(float x, float y) {
+void Graphics::drawPlane(float x, float y) {
     if (x<1)
         x=1;
     if (y<1)
@@ -104,7 +104,7 @@ void drawPlane(float x, float y) {
     glEnd();
 }
 
-void drawVertPlane(float x, float y) {
+void Graphics::drawVertPlane(float x, float y) {
     if (x<1)
         x=1;
     if (y<1)
@@ -117,7 +117,7 @@ void drawVertPlane(float x, float y) {
     glEnd();
 }
 
-void drawCube(float x, float y, float z) {
+void Graphics::drawCube(float x, float y, float z) {
     glBegin(GL_QUADS);
 
     //Back of cube:
@@ -159,7 +159,10 @@ void drawCube(float x, float y, float z) {
     glEnd();
 }
 
-void inline drawFace() {
+void Graphics::drawFace() {
+	glMatrixMode(GL_COLOR);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glBegin(GL_TRIANGLES);
     glColor3f(1.0f,1.0f,1.0f);
@@ -277,7 +280,7 @@ void inline drawFace() {
     glVertex3f(0.45f, 1.75f, 0.0f);
   glEnd();
   //---
-  float colorsRand[3] = { (float)1/(rand() % 10 + 1),
+  /*float colorsRand[3] = { (float)1/(rand() % 10 + 1),
                        (float)1/(rand() % 10 + 1),
                        (float)1/(rand() % 10 + 1) };
   glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
@@ -289,6 +292,7 @@ void inline drawFace() {
   glTranslatef(0.3f, 1.95f, -0.15f);
   drawCube(0.05f, 0.05f, 0.05f);
   glPopMatrix();
+  glColor3f(1.0f, 1.0f, 1.0f);*/
   //---
   //Begin Jaw
   glBegin(GL_TRIANGLES);
@@ -372,11 +376,15 @@ void inline drawFace() {
   //---
   //Inside of mouth
   glBegin(GL_POLYGON);
-    glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
-    glVertex3f(-0.40f, 1.65f, -0.05f);
+  //glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
+  glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(-0.40f, 1.65f, -0.05f);
     glVertex3f(-0.35f, 1.35f, 0.0f);
     glVertex3f(0.0f, 1.25f, 0.0f);
     glVertex3f(0.35f, 1.35f, 0.0f);
     glVertex3f(0.40f, 1.65f, -0.05f);
   glEnd();
+	glMatrixMode(GL_COLOR);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 }

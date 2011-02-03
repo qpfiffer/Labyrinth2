@@ -102,14 +102,16 @@ void doorContainer::initFakeDoor(int door) {
         glGenTextures(1, &(fakeDoors[door].fDoorTexHandle[0]));
         fakeDoors[door].texturesGenerated = true;
     }
-    getTextureHandle(fakeDoors[door].fDoorTex.c_str(), fakeDoors[door].fDoorTexHandle);
+    Graphics temp;
+	temp.getTextureHandle(fakeDoors[door].fDoorTex.c_str(), fakeDoors[door].fDoorTexHandle);
 }
 
 void doorContainer::drawDoors(float dimensions[3]) {
     // Fake doors first
     // 1. Textured polys
     // 2. Door frame (to come later)
-    int i;
+    Graphics temp; // For graphics functions
+	int i;
     for (i=0;i<numFakeDoors;i++) {
         glPushMatrix();
         // Assume we are in the center of the room
@@ -125,7 +127,7 @@ void doorContainer::drawDoors(float dimensions[3]) {
                 glTranslatef(0,0,(float)fakeDoors[i].x);
                 // rotate it so it is facing the right way
                 glRotatef(-90, 0, 1, 0);
-                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
+                temp.drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
                 //drawPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle);
                 break;
             case WALL2:
@@ -133,21 +135,21 @@ void doorContainer::drawDoors(float dimensions[3]) {
                 glTranslatef(dimensions[0]/2-0.05f, 1, -dimensions[1]/2);
                 glTranslatef(0,0,(float)fakeDoors[i].x);
                 glRotatef(90, 0,1,0);
-                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
+                temp.drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
                 break;
             case WALL3:
                 glTranslatef(-dimensions[0]/2, 1, -dimensions[1]/2+0.05f);
                 //glTranslatef(dimensions[0]/2+0.1f, 1, -dimensions[2]/2);
                 glTranslatef((float)fakeDoors[i].x,0,0);
                 glRotatef(180, 0,1,0);
-                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
+                temp.drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
                 break;
             case WALL4:
                 glTranslatef(-dimensions[0]/2, 1, dimensions[1]/2-0.05f);
                 //glTranslatef(dimensions[0]/2+0.1f, 1, dimensions[2]/2);
                 glTranslatef((float)fakeDoors[i].x,0,0);
                 //glRotatef(90, 0,0,1);
-                drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
+                temp.drawVertPlaneTex(1, 2, fakeDoors[i].fDoorTexHandle, 1.0f, 1.0f);
                 break;
         }
         glPopMatrix();
@@ -157,7 +159,7 @@ void doorContainer::drawDoors(float dimensions[3]) {
 // SUB-ROOM PUBLIC
 void subRoom::drawRoom() {
     // COMPLEX ROOM DRAWING FUNCTION GOES HERE
-    
+    Graphics temp;
     // Manage our doors, make sure they're setup
     //int i;
     // DEBUG:
@@ -192,16 +194,16 @@ void subRoom::drawRoom() {
     //        playerHandle->myLogFile->log<<"    Uses texture "<<myDoors->fakeDoors[i].fDoorTex<<endl;
     //    }
     //}
-
+	
     // Check to see if we have generated our textures yet:
     if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
-        glGenTextures( 3, &roomTextures[0] );
+		glGenTextures( 3, &roomTextures[0] );
          // Prepare the texture
-        getTextureHandle("./textures/wall_1.png", &roomTextures[1]);
+        temp.getTextureHandle("./textures/wall_1.png", &roomTextures[1]);
         // Because I've got nothing else to use:
-        getTextureHandle("./textures/floor_1.png", &roomTextures[0]);
-        getTextureHandle("./textures/ceiling_1.png", &roomTextures[2]);
-        printf("GLError: %i\n", glGetError());
+        temp.getTextureHandle("./textures/floor_1.png", &roomTextures[0]);
+        temp.getTextureHandle("./textures/ceiling_1.png", &roomTextures[2]);
+        //printf("GLError: %i\n", glGetError());
     }
     
     // Make sure we are where we are supposed to be:
@@ -215,10 +217,10 @@ void subRoom::drawRoom() {
         glPushMatrix();
         //glColor3f((float)1/(rand()%255), (float)1/(rand()%255), (float)1/(rand()%255));
         if ((int)roomTextures[0] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[0], dimensions[0], dimensions[1]);
+            temp.drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[0], dimensions[0], dimensions[1]);
         } else {
             glColor3f(1.0f, 0, 1.0f);
-            drawPlane(dimensions[0], dimensions[1]);
+            temp.drawPlane(dimensions[0], dimensions[1]);
         }
         glPopMatrix();
     }
@@ -231,10 +233,10 @@ void subRoom::drawRoom() {
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
         if ((int)roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1], dimensions[1], dimensions[2]);
+            temp.drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1], dimensions[1], dimensions[2]);
         } else {
             glColor3f(1.0f, 0, 0.25f);
-            drawPlane(dimensions[1], dimensions[2]);
+            temp.drawPlane(dimensions[1], dimensions[2]);
         }
         glPopMatrix();
     }
@@ -246,10 +248,10 @@ void subRoom::drawRoom() {
         glRotatef(90, 1,0,0);
         glRotatef(90, 0,0,1);
         if ((int)roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1], dimensions[1], dimensions[2]);
+            temp.drawPlaneTex(dimensions[1], dimensions[2], &roomTextures[1], dimensions[1], dimensions[2]);
         } else {
             glColor3f(1.0f, 0, 0.25f);
-            drawPlane(dimensions[1], dimensions[2]);
+            temp.drawPlane(dimensions[1], dimensions[2]);
         }
         glPopMatrix();
     }
@@ -260,10 +262,10 @@ void subRoom::drawRoom() {
         glTranslatef(0, dimensions[2]/2, -dimensions[1]/2);
         glRotatef(90, 1,0,0);
         if ((int)roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1], dimensions[0], dimensions[2]);
+            temp.drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1], dimensions[0], dimensions[2]);
         } else {
             glColor3f(0, 1.0f, 0.25f);
-            drawPlane(dimensions[0], dimensions[2]);
+            temp.drawPlane(dimensions[0], dimensions[2]);
         }
 
         glPopMatrix();
@@ -275,10 +277,10 @@ void subRoom::drawRoom() {
         glTranslatef(0, dimensions[2]/2, dimensions[1]/2);
         glRotatef(90, 1,0,0);
         if ((int)roomTextures[1] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1], dimensions[0], dimensions[2]);
+            temp.drawPlaneTex(dimensions[0], dimensions[2], &roomTextures[1], dimensions[0], dimensions[2]);
         } else {
             glColor3f(0, 1.0f, 0.25f);
-            drawPlane(dimensions[0], dimensions[2]);
+            temp.drawPlane(dimensions[0], dimensions[2]);
         }
         glPopMatrix();
     }
@@ -288,10 +290,10 @@ void subRoom::drawRoom() {
         
         glTranslatef(0,dimensions[2], 0);
         if ((int)roomTextures[2] != -1) {
-            drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[2], dimensions[0], dimensions[1]);
+            temp.drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[2], dimensions[0], dimensions[1]);
         } else {
             glColor3f(0.5f, 0.75f, 0);
-            drawPlane(dimensions[0], dimensions[1]);
+            temp.drawPlane(dimensions[0], dimensions[1]);
         }
         glPopMatrix();
     }

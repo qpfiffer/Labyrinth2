@@ -9,13 +9,16 @@
 #include <cstdlib>
 #include <string>
 
-int getTextureHandle(const char *name, GLuint *texture);
+class Graphics {
+public:
+	int getTextureHandle(const char *name, GLuint *texture);
 
-void drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty);
-void drawVertPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty);
-void drawPlane(float x, float y);
-void drawVertPlane(float x, float y);
+	void drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty);
+	void drawVertPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty);
+	void drawPlane(float x, float y);
+	void drawVertPlane(float x, float y);
 
-void drawCube(float x, float y, float z);
-void inline drawface();
+	void drawCube(float x, float y, float z);
+	void drawFace();
+};
 #endif

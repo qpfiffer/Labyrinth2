@@ -19,6 +19,7 @@ enum videoDrawMode { menu, game };
 class configInfo;
 class subRoom;
 class logFile;
+class Graphics;
 
 class Player {
 public:
