@@ -160,6 +160,7 @@ void doorContainer::drawDoors(float dimensions[3]) {
 void subRoom::drawRoom() {
     // COMPLEX ROOM DRAWING FUNCTION GOES HERE
     Graphics temp;
+	glPushMatrix();
     // Manage our doors, make sure they're setup
     //int i;
     // DEBUG:
@@ -198,13 +199,17 @@ void subRoom::drawRoom() {
     // Check to see if we have generated our textures yet:
     if (roomTextures[0] == 0) { // (Only check one, we do them all at once.
 		glGenTextures( 3, &roomTextures[0] );
-         // Prepare the texture
-        temp.getTextureHandle("./textures/wall_1.png", &roomTextures[1]);
+        // Prepare the texture
+        temp.getTextureHandle("./textures/wall_1.png", &roomTextures[0]);
         // Because I've got nothing else to use:
-        temp.getTextureHandle("./textures/floor_1.png", &roomTextures[0]);
+        temp.getTextureHandle("./textures/floor_1.png", &roomTextures[1]);
         temp.getTextureHandle("./textures/ceiling_1.png", &roomTextures[2]);
         //printf("GLError: %i\n", glGetError());
-    }
+	}
+	// DEBUG:
+	//for (int i(1);i<3;i++)
+	//    roomTextures[i] = -1;
+	
     
     // Make sure we are where we are supposed to be:
     glTranslatef(myGlobalCenter[0], myGlobalCenter[1], myGlobalCenter[2]);
@@ -214,16 +219,16 @@ void subRoom::drawRoom() {
     
     // Start with the floor
     if (boolWallDrawState[FLOOR]) {
-        glPushMatrix();
-        //glColor3f((float)1/(rand()%255), (float)1/(rand()%255), (float)1/(rand()%255));
-        if ((int)roomTextures[0] != -1) {
-            temp.drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[0], dimensions[0], dimensions[1]);
-        } else {
-            glColor3f(1.0f, 0, 1.0f);
-            temp.drawPlane(dimensions[0], dimensions[1]);
+            glPushMatrix();
+            //glColor3f((float)1/(rand()%255), (float)1/(rand()%255), (float)1/(rand()%255));
+            if ((int)roomTextures[0] != -1) {
+                temp.drawPlaneTex(dimensions[0], dimensions[1], &roomTextures[0], dimensions[0], dimensions[1]);
+            } else {
+                glColor3f(1.0f, 0, 1.0f);
+                temp.drawPlane(dimensions[0], dimensions[1]);
+            }
+            glPopMatrix();
         }
-        glPopMatrix();
-    }
     
     // Walls will be drawn clockwise starting with the left
     // -, +
@@ -297,6 +302,7 @@ void subRoom::drawRoom() {
         }
         glPopMatrix();
     }
+	glPopMatrix();
 }
 
 int subRoom::GetWallDrawState(int wall) {

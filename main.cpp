@@ -123,7 +123,7 @@ int Game::setupVideo(SDL_Surface *screen) {
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glHint (GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-        glLineWidth (1.5); */
+        glLineWidth (1.5);*/
         // End AA
 
         glLoadIdentity(); // Blank GL_MODELVIEW
@@ -144,7 +144,7 @@ void Game::draw (SDL_Surface *screen) {
 	if (mInfo->getCurrentDrawMode() == game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity(); // Clear modelview for good measure. THAT'LL SHOW THAT GUY
-        glClearColor(1.0f,1.0f,1.0f,1.0f); // Set the default fill to yellow
+        glClearColor(0.0f,0.0f,0.0f,0.0f); // Set the default fill to yellow
         glColor3f(1.0f, 1.0f, 1.0f); // Make sure our color is set to white
 		// Mouse rotation stuff:
         // This little loop breaks everything after a little while. I wouldn't enable it.
@@ -167,7 +167,8 @@ void Game::draw (SDL_Surface *screen) {
 		drawCurrentRoom();
 
 		Graphics tempG;
-		tempG.drawFace();
+		//glColor3f(1.0,0.0f,0.0f);
+		tempG.drawFace();		
 	
         SDL_GL_SwapBuffers();
     } else {

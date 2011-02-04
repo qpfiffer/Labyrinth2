@@ -33,6 +33,7 @@ int Graphics::getTextureHandle(const char *name, GLuint *texture) {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
                       texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+		
     } else {
         printf("Could not load image.\n");
         return -1;
@@ -41,7 +42,7 @@ int Graphics::getTextureHandle(const char *name, GLuint *texture) {
         SDL_FreeSurface(surface);
 
     printf("Loaded image.\n");
-    return 0;
+    return -1;
 }
 
 void Graphics::drawPlaneTex(float x, float y, GLuint *texture, float repeatx, float repeaty) {
@@ -119,7 +120,6 @@ void Graphics::drawVertPlane(float x, float y) {
 
 void Graphics::drawCube(float x, float y, float z) {
     glBegin(GL_QUADS);
-
     //Back of cube:
     glVertex3f(-x/2, y/2, -z/2);
     glVertex3f(x/2, y/2, -z/2);
@@ -280,7 +280,7 @@ void Graphics::drawFace() {
     glVertex3f(0.45f, 1.75f, 0.0f);
   glEnd();
   //---
-  /*float colorsRand[3] = { (float)1/(rand() % 10 + 1),
+  float colorsRand[3] = { (float)1/(rand() % 10 + 1),
                        (float)1/(rand() % 10 + 1),
                        (float)1/(rand() % 10 + 1) };
   glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
@@ -292,7 +292,7 @@ void Graphics::drawFace() {
   glTranslatef(0.3f, 1.95f, -0.15f);
   drawCube(0.05f, 0.05f, 0.05f);
   glPopMatrix();
-  glColor3f(1.0f, 1.0f, 1.0f);*/
+  glColor3f(1.0f, 1.0f, 1.0f);
   //---
   //Begin Jaw
   glBegin(GL_TRIANGLES);
@@ -376,8 +376,7 @@ void Graphics::drawFace() {
   //---
   //Inside of mouth
   glBegin(GL_POLYGON);
-  //glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
-  glColor3f(1.0f, 0.0f, 0.0f);
+  glColor3f(colorsRand[0],colorsRand[1],colorsRand[2]);
 	glVertex3f(-0.40f, 1.65f, -0.05f);
     glVertex3f(-0.35f, 1.35f, 0.0f);
     glVertex3f(0.0f, 1.25f, 0.0f);
