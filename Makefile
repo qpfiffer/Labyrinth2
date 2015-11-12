@@ -4,13 +4,13 @@ NAME = btw
 LIBDIR =
 COMPILERFLAGS = -std=c++0x -Wall -g
 OBJFILES = room.o shape.o config.o world.o
-EVERYTHING = $(INCLUDE) $(LIBDIR) $(LINKER) $(COMPILERFLAGS)
+EVERYTHING = $(INCLUDE) $(LIBDIR) $(COMPILERFLAGS)
 all:    main.cpp main.h
 	g++ $(EVERYTHING) -c room.cpp
 	g++ $(EVERYTHING) -c config.cpp
 	g++ $(EVERYTHING) -c shape.cpp
 	g++ $(EVERYTHING) -c world.cpp
-	g++ $(EVERYTHING) -o $(NAME) main.cpp $(OBJFILES)
+	g++ $(EVERYTHING) -o $(NAME) main.cpp $(OBJFILES) $(LINKER)
 clean:
 	rm *.o
 	rm $(NAME)
